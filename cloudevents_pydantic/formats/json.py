@@ -40,9 +40,9 @@ def to_json(event: CloudEvent) -> str:
 @overload
 def from_json(data: str) -> CloudEvent: ...
 @overload
-def from_json(data: str, model_class: Type[T]) -> T: ...
-def from_json(data: str, model_class: Type[CloudEvent] = CloudEvent) -> CloudEvent:
-    return model_class.model_validate_json(data)
+def from_json(data: str, event_class: Type[T]) -> T: ...
+def from_json(data: str, event_class: Type[CloudEvent] = CloudEvent) -> CloudEvent:
+    return event_class.model_validate_json(data)
 
 
 def to_json_batch(events: List[CloudEvent]) -> str:
