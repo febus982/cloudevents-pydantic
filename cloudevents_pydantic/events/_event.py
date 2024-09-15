@@ -26,7 +26,14 @@ import typing
 
 from cloudevents.pydantic.fields_docs import FIELD_DESCRIPTIONS
 from cloudevents.sdk.event import attribute
-from pydantic import BaseModel, ConfigDict, Field, model_serializer, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    TypeAdapter,
+    model_serializer,
+    model_validator,
+)
 from pydantic_core.core_schema import ValidationInfo
 
 
@@ -106,18 +113,21 @@ class CloudEvent(BaseModel):  # type: ignore
         },
     )
 
+    """
+    Having the JSON functionality here is a violation of the Single Responsibility
+    Principle, however we want to get advantage of improved pydantic JSON performances.
+    Using `orjson` could solve this, perhaps it could be a future improvement.
+    """
+
     @model_serializer(when_used="json")
     def _base64_json_serializer(self) -> typing.Dict[str, typing.Any]:
-        """Performs Pydantic-specific serialization of the event when
-        serializing the model using `.model_dump_json()` method.
-
-        Needed by the pydantic base-model to serialize the event correctly to json.
-        Without this function the data will be incorrectly serialized.
+        """Takes care of handling binary data serialization into `data_base64`
+        attribute.
 
         :param self: CloudEvent.
 
-        :return: Event serialized as a standard CloudEvent dict with user specific
-        parameters.
+        :return: Event serialized as a standard CloudEvent dict with binary
+                 data handled.
         """
         model_dict = self.model_dump()
         if isinstance(model_dict["data"], (bytes, bytearray, memoryview)):
@@ -129,7 +139,17 @@ class CloudEvent(BaseModel):  # type: ignore
     @model_validator(mode="before")
     @classmethod
     def _base64_data_parser(cls, data: typing.Any, info: ValidationInfo) -> typing.Any:
+        """Takes care of handling binary data deserialization from `data_base64`
+        attribute.
+
+        :param data: Input data for validation
+        :param info: Pydantic validation context
+        :return: input data, after handling data_base64
+        """
         if info.mode == "json" and isinstance(data, dict) and data.get("data_base64"):
             data["data"] = base64.b64decode(data["data_base64"])
             del data["data_base64"]
         return data
+
+
+CloudEventBatchAdapter = TypeAdapter(typing.List[CloudEvent])

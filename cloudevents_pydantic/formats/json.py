@@ -20,8 +20,10 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
+from typing import Iterable, List
 
 from ..events import CloudEvent
+from ..events._event import CloudEventBatchAdapter
 
 
 def to_json(event: CloudEvent) -> str:
@@ -30,3 +32,11 @@ def to_json(event: CloudEvent) -> str:
 
 def from_json(data: str) -> CloudEvent:
     return CloudEvent.model_validate_json(data)
+
+
+def to_json_batch(events: Iterable[CloudEvent]) -> str:
+    return CloudEventBatchAdapter.dump_json(events).decode()
+
+
+def from_json_batch(data: str) -> List[CloudEvent]:
+    return CloudEventBatchAdapter.validate_json(data)

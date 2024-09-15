@@ -30,7 +30,12 @@ from cloudevents.sdk.event.attribute import SpecVersion
 from jsonschema import validate
 
 from cloudevents_pydantic.events import CloudEvent
-from cloudevents_pydantic.formats.json import from_json, to_json
+from cloudevents_pydantic.formats.json import (
+    from_json,
+    from_json_batch,
+    to_json,
+    to_json_batch,
+)
 
 test_attributes = {
     "type": "com.example.string",
@@ -39,6 +44,7 @@ test_attributes = {
     "time": "2022-07-16T12:03:20.519216+04:00",
 }
 valid_json = '{"data":null,"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
+valid_json_batch = '[{"data":null,"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}]'
 
 with open(
     Path(__file__).parent.joinpath("cloudevents_jsonschema_1.0.2.json"),
@@ -70,11 +76,44 @@ def test_from_json():
     assert event.dataschema is None
 
 
+def test_from_json_batch():
+    events = from_json_batch(valid_json_batch)
+    assert isinstance(events, list)
+    assert len(events) == 1
+
+    event = events[0]
+    assert event.type == "com.example.string"
+    assert event.source == "https://example.com/event-producer"
+    assert event.data is None
+    assert event.id == "b96267e2-87be-4f7a-b87c-82f64360d954"
+    assert event.specversion is SpecVersion.v1_0
+    assert event.time == datetime.datetime(
+        year=2022,
+        month=7,
+        day=16,
+        hour=12,
+        minute=3,
+        second=20,
+        microsecond=519216,
+        tzinfo=datetime.timezone(datetime.timedelta(hours=4)),
+    )
+    assert event.subject is None
+    assert event.datacontenttype is None
+    assert event.dataschema is None
+
+
 def test_to_json():
     event = CloudEvent(**test_attributes)
     json_repr = to_json(event)
     assert json_repr == valid_json
     validate(json.loads(json_repr), cloudevent_schema)
+
+
+def test_to_json_batch():
+    event = CloudEvent(**test_attributes)
+    json_repr = to_json_batch([event])
+    assert json.loads(json_repr) == json.loads(valid_json_batch)
+    validate(json.loads(json_repr)[0], cloudevent_schema)
 
 
 @pytest.mark.parametrize(
@@ -86,12 +125,19 @@ def test_to_json():
         pytest.param(memoryview(b"test"), True, id="memoryview"),
     ],
 )
-def test_to_json_base64(data: Any, b64_expected: bool):
+@pytest.mark.parametrize("batch", [True, False])
+def test_to_json_base64(
+    data: Any,
+    b64_expected: bool,
+    batch: bool,
+):
     event = CloudEvent(**test_attributes)
     event.data = data
 
-    json_repr = to_json(event)
+    json_repr = to_json_batch([event]) if batch else to_json(event)
     parsed_json = json.loads(json_repr)
+    if batch:
+        parsed_json = parsed_json[0]
 
     assert ('"data_base64":' in json_repr) is b64_expected
     assert ('"data":' not in json_repr) is b64_expected
@@ -111,12 +157,16 @@ def test_to_json_base64(data: Any, b64_expected: bool):
         pytest.param("dGVzdA==", b"test", id='memoryview(b"test")'),
     ],
 )
-def test_from_json_base64(b64_data: str, expected_value: type):
+@pytest.mark.parametrize("batch", [True, False])
+def test_from_json_base64(b64_data: str, expected_value: type, batch: bool):
     json_string = (
         '{"data_base64":"'
         + b64_data
         + '","source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
     )
 
-    event = from_json(json_string)
+    if batch:
+        event = from_json_batch("[" + json_string + "]")[0]
+    else:
+        event = from_json(json_string)
     assert event.data == expected_value
