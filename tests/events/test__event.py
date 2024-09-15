@@ -21,9 +21,12 @@
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
 import datetime
+import json
 from uuid import UUID
 
+import pytest
 from cloudevents.sdk.event.attribute import SpecVersion
+from pydantic import ValidationError
 
 from cloudevents_pydantic.events import CloudEvent
 
@@ -118,3 +121,14 @@ def test_can_submit_datetime_object():
     assert event.subject == test_full_attributes["subject"]
     assert event.datacontenttype == test_full_attributes["datacontenttype"]
     assert event.dataschema == test_full_attributes["dataschema"]
+
+
+def test_data_base64_validation_fails_if_not_json():
+    json_string = '{"data_base64":"dGVzdA==","source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
+    attributes = json.loads(json_string)
+
+    with pytest.raises(ValidationError):
+        CloudEvent.model_validate(attributes)
+
+    event = CloudEvent.model_validate_json(json_string)
+    assert event.data == b"test"

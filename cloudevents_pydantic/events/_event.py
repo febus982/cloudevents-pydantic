@@ -20,13 +20,14 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
-
+import base64
 import datetime
 import typing
 
 from cloudevents.pydantic.fields_docs import FIELD_DESCRIPTIONS
 from cloudevents.sdk.event import attribute
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_serializer, model_validator
+from pydantic_core.core_schema import ValidationInfo
 
 
 class CloudEvent(BaseModel):  # type: ignore
@@ -88,7 +89,7 @@ class CloudEvent(BaseModel):  # type: ignore
     )
 
     model_config = ConfigDict(
-        extra="allow",  # this is the way we implement extensions
+        extra="forbid",
         json_schema_extra={
             "example": {
                 "specversion": "1.0",
@@ -104,3 +105,31 @@ class CloudEvent(BaseModel):  # type: ignore
             }
         },
     )
+
+    @model_serializer(when_used="json")
+    def _base64_json_serializer(self) -> typing.Dict[str, typing.Any]:
+        """Performs Pydantic-specific serialization of the event when
+        serializing the model using `.model_dump_json()` method.
+
+        Needed by the pydantic base-model to serialize the event correctly to json.
+        Without this function the data will be incorrectly serialized.
+
+        :param self: CloudEvent.
+
+        :return: Event serialized as a standard CloudEvent dict with user specific
+        parameters.
+        """
+        model_dict = self.model_dump()
+        if isinstance(model_dict["data"], (bytes, bytearray, memoryview)):
+            model_dict["data_base64"] = base64.b64encode(model_dict["data"])
+            del model_dict["data"]
+
+        return model_dict
+
+    @model_validator(mode="before")
+    @classmethod
+    def _base64_data_parser(cls, data: typing.Any, info: ValidationInfo) -> typing.Any:
+        if info.mode == "json" and isinstance(data, dict) and data.get("data_base64"):
+            data["data"] = base64.b64decode(data["data_base64"])
+            del data["data_base64"]
+        return data
