@@ -20,23 +20,42 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
-from typing import Iterable, List
+from typing import List, Type, TypeVar, overload
+
+from pydantic import TypeAdapter
 
 from ..events import CloudEvent
 from ..events._event import CloudEventBatchAdapter
+
+T = TypeVar("T", bound=CloudEvent)
+LT = TypeVar("LT", bound=List[CloudEvent])
 
 
 def to_json(event: CloudEvent) -> str:
     return event.model_dump_json()
 
 
-def from_json(data: str) -> CloudEvent:
-    return CloudEvent.model_validate_json(data)
+# mypy issue: https://github.com/python/mypy/issues/3737
+# https://stackoverflow.com/questions/75058589/annotating-function-with-typevar-and-default-value-results-in-union-type
+@overload
+def from_json(data: str) -> CloudEvent: ...
+@overload
+def from_json(data: str, model_class: Type[T]) -> T: ...
+def from_json(data: str, model_class: Type[CloudEvent] = CloudEvent) -> CloudEvent:
+    return model_class.model_validate_json(data)
 
 
-def to_json_batch(events: Iterable[CloudEvent]) -> str:
+def to_json_batch(events: List[CloudEvent]) -> str:
     return CloudEventBatchAdapter.dump_json(events).decode()
 
 
-def from_json_batch(data: str) -> List[CloudEvent]:
-    return CloudEventBatchAdapter.validate_json(data)
+# mypy issue: https://github.com/python/mypy/issues/3737
+# https://stackoverflow.com/questions/75058589/annotating-function-with-typevar-and-default-value-results-in-union-type
+@overload
+def from_json_batch(data: str) -> List[CloudEvent]: ...
+@overload
+def from_json_batch(data: str, batch_adapter: TypeAdapter[LT]) -> LT: ...
+def from_json_batch(
+    data: str, batch_adapter: TypeAdapter = CloudEventBatchAdapter
+) -> List[CloudEvent]:
+    return batch_adapter.validate_json(data)

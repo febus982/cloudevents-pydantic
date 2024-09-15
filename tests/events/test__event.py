@@ -101,7 +101,9 @@ def test_can_submit_datetime_object():
             tzinfo=datetime.timezone(datetime.timedelta(hours=4)),
         )
     }
-    event = CloudEvent(**(test_full_attributes | time_input))
+    attrs = test_full_attributes.copy()
+    attrs.update(time_input)
+    event = CloudEvent(**attrs)
 
     assert event.type == test_full_attributes["type"]
     assert event.source == test_full_attributes["source"]
