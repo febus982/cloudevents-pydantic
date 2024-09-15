@@ -1,11 +1,11 @@
-# bootstrap-python-package
+# cloudevents-pydantic
 ![Static Badge](https://img.shields.io/badge/Python-3.8_%7C_3.9_%7C_3.10_%7C_3.11_%7C_3.12-blue?logo=python&logoColor=white)
-[![Stable Version](https://img.shields.io/pypi/v/bootstrap-python-package?color=blue)](https://pypi.org/project/bootstrap-python-package/)
+[![Stable Version](https://img.shields.io/pypi/v/cloudevents-pydantic?color=blue)](https://pypi.org/project/cloudevents-pydantic/)
 [![stability-beta](https://img.shields.io/badge/stability-beta-33bbff.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#beta)
 
-[![Python tests](https://github.com/febus982/bootstrap-python-package/actions/workflows/python-tests.yml/badge.svg?branch=main)](https://github.com/febus982/bootstrap-python-package/actions/workflows/python-tests.yml)
-[![Maintainability](https://api.codeclimate.com/v1/badges/593e78ec96ed5ebb0dd3/maintainability)](https://codeclimate.com/github/febus982/bootstrap-python-package/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/593e78ec96ed5ebb0dd3/test_coverage)](https://codeclimate.com/github/febus982/bootstrap-python-package/test_coverage)
+[![Python tests](https://github.com/febus982/cloudevents-pydantic/actions/workflows/python-tests.yml/badge.svg?branch=main)](https://github.com/febus982/cloudevents-pydantic/actions/workflows/python-tests.yml)
+[![Maintainability](https://api.codeclimate.com/v1/badges/593e78ec96ed5ebb0dd3/maintainability)](https://codeclimate.com/github/febus982/cloudevents-pydantic/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/593e78ec96ed5ebb0dd3/test_coverage)](https://codeclimate.com/github/febus982/cloudevents-pydantic/test_coverage)
 
 [![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json)](https://github.com/charliermarsh/ruff)
@@ -29,12 +29,12 @@ It is configured with all the following features:
 ## How to use this repository template to create a new package
 
 * Create your github repository using this template. (The big green `Use this template` button)
-* Rename the `bootstrap_python_package` directory
-* Search and replace all the occurrences of `bootstrap-python-package` and `bootstrap_python_package`
+* Rename the `cloudevents_pydantic` directory
+* Search and replace all the occurrences of `cloudevents-pydantic` and `cloudevents_pydantic`
 * Configure a pending trusted publisher on [pypi](https://pypi.org/manage/account/publishing) using the following values:
-    * PyPI Project Name: The github repository name (in this case `bootstrap-python-package`)
+    * PyPI Project Name: The github repository name (in this case `cloudevents-pydantic`)
     * Owner: The github repository owner (in this case `febus982`)
-    * Repository name: The github repository name (in this case `bootstrap-python-package`)
+    * Repository name: The github repository name (in this case `cloudevents-pydantic`)
     * Workflow name: `release.yml`
 * Create a GitHub Actions secret named `CODECLIMATE_REPORTER_ID` (at URL `https://github.com/GITHUB_NAME_OR_ORGANIZATION/GITHUB_REPOSITORY/settings/secrets/actions`)
   containing the codeclimate reporter id (you can find it at `https://codeclimate.com/repos/YOUR_REPO_ID/settings/test_reporter`).

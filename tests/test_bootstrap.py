@@ -21,7 +21,7 @@
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
 
-from bootstrap_python_package import some_function
+from cloudevents_pydantic import some_function
 
 
 async def test_some_variable_to_test():
