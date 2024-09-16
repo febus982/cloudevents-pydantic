@@ -22,4 +22,4 @@
 # ==============================================================================
 
 
-from ._event import CloudEvent, CloudEventBatchAdapter
+from ._event import CloudEvent

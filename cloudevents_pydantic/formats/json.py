@@ -20,22 +20,20 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
-from typing import List, Type, TypeVar, overload
+from typing import Sequence, Type
 
 from pydantic import TypeAdapter
+from typing_extensions import TypeVar, overload
 
-from ..events import CloudEvent, CloudEventBatchAdapter
+from ..events import CloudEvent
 
-_T = TypeVar("_T", bound=CloudEvent)
-_LT = TypeVar("_LT", bound=List[CloudEvent])
+_T = TypeVar("_T", bound=CloudEvent, default=CloudEvent)
 
 
 def to_json(event: CloudEvent) -> str:
     return event.model_dump_json()
 
 
-# mypy issue: https://github.com/python/mypy/issues/3737
-# https://stackoverflow.com/questions/75058589/annotating-function-with-typevar-and-default-value-results-in-union-type
 @overload
 def from_json(data: str) -> CloudEvent: ...
 @overload
@@ -44,17 +42,15 @@ def from_json(data: str, event_class: Type[CloudEvent] = CloudEvent) -> CloudEve
     return event_class.model_validate_json(data)
 
 
-def to_json_batch(events: List[CloudEvent]) -> str:
-    return CloudEventBatchAdapter.dump_json(events).decode()
+def to_json_batch(
+    events: Sequence[_T],
+    batch_adapter: TypeAdapter[Sequence[_T]] = TypeAdapter(Sequence[CloudEvent]),
+) -> str:
+    return batch_adapter.dump_json(events).decode()
 
 
-# mypy issue: https://github.com/python/mypy/issues/3737
-# https://stackoverflow.com/questions/75058589/annotating-function-with-typevar-and-default-value-results-in-union-type
-@overload
-def from_json_batch(data: str) -> List[CloudEvent]: ...
-@overload
-def from_json_batch(data: str, batch_adapter: TypeAdapter[_LT]) -> _LT: ...
 def from_json_batch(
-    data: str, batch_adapter: TypeAdapter = CloudEventBatchAdapter
-) -> List[CloudEvent]:
+    data: str,
+    batch_adapter: TypeAdapter[Sequence[_T]] = TypeAdapter(Sequence[CloudEvent]),
+) -> Sequence[_T]:
     return batch_adapter.validate_json(data)

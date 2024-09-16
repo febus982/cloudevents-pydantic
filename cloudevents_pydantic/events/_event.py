@@ -30,7 +30,6 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
-    TypeAdapter,
     model_serializer,
     model_validator,
 )
@@ -150,6 +149,3 @@ class CloudEvent(BaseModel):  # type: ignore
             data["data"] = base64.b64decode(data["data_base64"])
             del data["data_base64"]
         return data
-
-
-CloudEventBatchAdapter = TypeAdapter(typing.List[CloudEvent])
