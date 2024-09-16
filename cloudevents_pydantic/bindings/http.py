@@ -20,9 +20,51 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
+from typing import (
+    Dict,
+    Generic,
+    Sequence,
+    Tuple,
+    Type,
+    cast,
+)
 
-from cloudevents_pydantic import some_function
+from pydantic import TypeAdapter
+from typing_extensions import TypeVar
+
+from cloudevents_pydantic.events import CloudEvent
+from cloudevents_pydantic.formats import json
+
+_T = TypeVar("_T", bound=CloudEvent, default=CloudEvent)
 
 
-async def test_some_variable_to_test():
-    assert some_function() == "some_variable_to_test"
+class HTTPHandler(Generic[_T]):
+    event_class: Type[_T]
+    batch_adapter: TypeAdapter[Sequence[_T]]
+
+    def __init__(self, event_class: Type[_T] = cast(Type[_T], CloudEvent)) -> None:
+        super().__init__()
+        self.event_class = event_class
+        self.batch_adapter = TypeAdapter(Sequence[event_class])  # type: ignore[valid-type]
+
+    def to_json(self, event: _T) -> Tuple[Dict[str, str], str]:
+        headers = {"Content-Type": "application/cloudevents+json; charset=UTF-8"}
+        data = json.to_json(event)
+        return headers, data
+
+    def to_json_batch(self, events: Sequence[_T]) -> Tuple[Dict[str, str], str]:
+        headers = {"Content-Type": "application/cloudevents-batch+json; charset=UTF-8"}
+        data = json.to_json_batch(events, self.batch_adapter)
+        return headers, data
+
+    def from_json(
+        self,
+        body: str,
+    ) -> CloudEvent:
+        return json.from_json(body, self.event_class)
+
+    def from_json_batch(
+        self,
+        body: str,
+    ) -> Sequence[_T]:
+        return json.from_json_batch(body, self.batch_adapter)
