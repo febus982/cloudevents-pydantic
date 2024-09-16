@@ -24,11 +24,10 @@ from typing import List, Type, TypeVar, overload
 
 from pydantic import TypeAdapter
 
-from ..events import CloudEvent
-from ..events._event import CloudEventBatchAdapter
+from ..events import CloudEvent, CloudEventBatchAdapter
 
-T = TypeVar("T", bound=CloudEvent)
-LT = TypeVar("LT", bound=List[CloudEvent])
+_T = TypeVar("_T", bound=CloudEvent)
+_LT = TypeVar("_LT", bound=List[CloudEvent])
 
 
 def to_json(event: CloudEvent) -> str:
@@ -40,7 +39,7 @@ def to_json(event: CloudEvent) -> str:
 @overload
 def from_json(data: str) -> CloudEvent: ...
 @overload
-def from_json(data: str, event_class: Type[T]) -> T: ...
+def from_json(data: str, event_class: Type[_T]) -> _T: ...
 def from_json(data: str, event_class: Type[CloudEvent] = CloudEvent) -> CloudEvent:
     return event_class.model_validate_json(data)
 
@@ -54,7 +53,7 @@ def to_json_batch(events: List[CloudEvent]) -> str:
 @overload
 def from_json_batch(data: str) -> List[CloudEvent]: ...
 @overload
-def from_json_batch(data: str, batch_adapter: TypeAdapter[LT]) -> LT: ...
+def from_json_batch(data: str, batch_adapter: TypeAdapter[_LT]) -> _LT: ...
 def from_json_batch(
     data: str, batch_adapter: TypeAdapter = CloudEventBatchAdapter
 ) -> List[CloudEvent]:
