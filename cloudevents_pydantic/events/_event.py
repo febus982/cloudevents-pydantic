@@ -69,7 +69,7 @@ class CloudEvent(BaseModel):  # type: ignore
         examples=[FIELD_DESCRIPTIONS["specversion"].get("example")],
         default=attribute.DEFAULT_SPECVERSION,
     )
-    time: typing.Optional[datetime.datetime] = Field(
+    time: datetime.datetime = Field(
         title=FIELD_DESCRIPTIONS["time"].get("title"),
         description=FIELD_DESCRIPTIONS["time"].get("description"),
         examples=[FIELD_DESCRIPTIONS["time"].get("example")],
