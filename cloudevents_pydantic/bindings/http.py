@@ -48,12 +48,12 @@ class HTTPHandler(Generic[_T]):
         self.batch_adapter = TypeAdapter(Sequence[event_class])  # type: ignore[valid-type]
 
     def to_json(self, event: _T) -> Tuple[Dict[str, str], str]:
-        headers = {"Content-Type": "application/cloudevents+json; charset=UTF-8"}
+        headers = {"content-type": "application/cloudevents+json; charset=UTF-8"}
         data = json.to_json(event)
         return headers, data
 
     def to_json_batch(self, events: Sequence[_T]) -> Tuple[Dict[str, str], str]:
-        headers = {"Content-Type": "application/cloudevents-batch+json; charset=UTF-8"}
+        headers = {"content-type": "application/cloudevents-batch+json; charset=UTF-8"}
         data = json.to_json_batch(events, self.batch_adapter)
         return headers, data
 
