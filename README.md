@@ -1,11 +1,11 @@
 # cloudevents-pydantic
-![Static Badge](https://img.shields.io/badge/Python-3.8_%7C_3.9_%7C_3.10_%7C_3.11_%7C_3.12-blue?logo=python&logoColor=white)
+![Static Badge](https://img.shields.io/badge/Python-3.10_%7C_3.11_%7C_3.12-blue?logo=python&logoColor=white)
 [![Stable Version](https://img.shields.io/pypi/v/cloudevents-pydantic?color=blue)](https://pypi.org/project/cloudevents-pydantic/)
-[![stability-beta](https://img.shields.io/badge/stability-beta-33bbff.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#beta)
+[![stability-wip](https://img.shields.io/badge/stability-wip-lightgrey.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#work-in-progress)
 
 [![Python tests](https://github.com/febus982/cloudevents-pydantic/actions/workflows/python-tests.yml/badge.svg?branch=main)](https://github.com/febus982/cloudevents-pydantic/actions/workflows/python-tests.yml)
-[![Maintainability](https://api.codeclimate.com/v1/badges/593e78ec96ed5ebb0dd3/maintainability)](https://codeclimate.com/github/febus982/cloudevents-pydantic/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/593e78ec96ed5ebb0dd3/test_coverage)](https://codeclimate.com/github/febus982/cloudevents-pydantic/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/c7fe3ebcadd850d7ed3f/maintainability)](https://codeclimate.com/github/febus982/cloudevents-pydantic/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/c7fe3ebcadd850d7ed3f/test_coverage)](https://codeclimate.com/github/febus982/cloudevents-pydantic/test_coverage)
 
 [![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json)](https://github.com/charliermarsh/ruff)
@@ -33,17 +33,6 @@ It is configured with all the following features:
     * Owner: The github repository owner (in this case `febus982`)
     * Repository name: The github repository name (in this case `cloudevents-pydantic`)
     * Workflow name: `release.yml`
-* Create a GitHub Actions secret named `CODECLIMATE_REPORTER_ID` (at URL `https://github.com/GITHUB_NAME_OR_ORGANIZATION/GITHUB_REPOSITORY/settings/secrets/actions`)
-  containing the codeclimate reporter id (you can find it at `https://codeclimate.com/repos/YOUR_REPO_ID/settings/test_reporter`).
-  If you don't want to use CodeClimate just delete `workflows/python-quality.yml`.
-* Update the badges in `README.md`! (check [shields.io](https://shields.io/) for extra badges)
-* Update the PyCharm Copyright profile in the IDE settings: Editor | Copyright | Copyright Profiles (if you want to use it)
-* Setup local development:
-    * Clone the repository
-    * Install poetry `pip install poetry`
-    * Install dev dependencies with `make dev-dependencies`
-    * (optional) It is strongly recommended to install [pre-commit](https://pre-commit.com/#installation)
-      and run `pre-commit install` so that formatting and linting are automatically executed during `git commit`.
 * Setup GitHub pages (this need local development setup):
     * Initialise documentation branch `poetry run mike deploy dev latest --update-aliases --push`
     * Configure GitHub Pages to deploy from the `gh-pages` branch (at URL `https://github.com/GITHUB_NAME_OR_ORGANIZATION/GITHUB_REPOSITORY/settings/pages`)
