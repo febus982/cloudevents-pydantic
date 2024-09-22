@@ -48,8 +48,8 @@ test_full_attributes = {
 }
 
 
-def test_defaults_are_populated():
-    event = CloudEvent(**test_attributes)
+def test_defaults_are_populated_when_using_factory():
+    event = CloudEvent.event_factory(**test_attributes)
 
     # input data
     assert event.type == test_attributes["type"]
@@ -73,7 +73,7 @@ def test_defaults_are_populated():
     assert event.dataschema is None
 
 
-def test_all_values_can_be_submitted():
+def test_all_values_can_be_submitted_as_string():
     event = CloudEvent(**test_full_attributes)
 
     assert event.type == test_full_attributes["type"]
@@ -131,6 +131,41 @@ def test_can_submit_datetime_object():
     assert event.specversion is SpecVersion.v1_0
     assert event.time == datetime.datetime(
         year=2020,
+        month=7,
+        day=16,
+        hour=12,
+        minute=3,
+        second=20,
+        microsecond=519216,
+        tzinfo=datetime.timezone(datetime.timedelta(hours=4)),
+    )
+    assert event.subject == test_full_attributes["subject"]
+    assert event.datacontenttype == test_full_attributes["datacontenttype"]
+    assert event.dataschema == ParseResult(
+        scheme="http",
+        netloc="some-dataschema.url",
+        path="",
+        params="",
+        query="",
+        fragment="",
+    )
+
+
+def test_can_submit_specversion_enum():
+    time_input = {"specversion": SpecVersion.v1_0}
+    attrs = test_full_attributes.copy()
+    attrs.update(time_input)
+    event = CloudEvent(**attrs)
+
+    assert event.type == test_full_attributes["type"]
+    assert event.source == ParseResult(
+        scheme="dummy", netloc="", path="source", params="", query="", fragment=""
+    )
+    assert event.data == test_full_attributes["data"]
+    assert event.id == test_full_attributes["id"]
+    assert event.specversion is SpecVersion.v1_0
+    assert event.time == datetime.datetime(
+        year=2022,
         month=7,
         day=16,
         hour=12,

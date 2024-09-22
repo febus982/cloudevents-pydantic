@@ -54,6 +54,9 @@ def absolute_uri_validator(value: str) -> ParseResult:
 
 
 def generic_uri_validator(value: str) -> ParseResult:
+    if value is None:
+        raise ValueError("Field is required")
+
     return urlparse(value)
 
 

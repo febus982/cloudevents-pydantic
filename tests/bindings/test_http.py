@@ -30,11 +30,18 @@ from cloudevents_pydantic.bindings.http import HTTPHandler
 from cloudevents_pydantic.events import CloudEvent
 from cloudevents_pydantic.formats import json
 
+minimal_attributes = {
+    "type": "com.example.string",
+    "source": "https://example.com/event-producer",
+    "id": "b96267e2-87be-4f7a-b87c-82f64360d954",
+    "specversion": "1.0",
+}
 test_attributes = {
     "type": "com.example.string",
     "source": "https://example.com/event-producer",
     "id": "b96267e2-87be-4f7a-b87c-82f64360d954",
     "time": "2022-07-16T12:03:20.519216+04:00",
+    "specversion": "1.0",
 }
 valid_json = '{"data":null,"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
 valid_json_batch = '[{"data":null,"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}]'

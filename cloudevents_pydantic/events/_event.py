@@ -21,11 +21,11 @@
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
 import base64
+import datetime
 import typing
 from enum import Enum
 
 from cloudevents.pydantic.fields_docs import FIELD_DESCRIPTIONS
-from cloudevents.sdk.event import attribute
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -56,14 +56,25 @@ class SpecVersion(str, Enum):
 DEFAULT_SPECVERSION = SpecVersion.v1_0
 
 
-def default_ulid_str():
-    return str(ULID())
-
-
 class CloudEvent(BaseModel):  # type: ignore
     """
     A Python-friendly CloudEvent representation backed by Pydantic-modeled fields.
     """
+
+    @classmethod
+    def event_factory(
+        cls,
+        id: typing.Optional[str] = None,
+        specversion: typing.Optional[SpecVersion] = None,
+        time: typing.Optional[datetime.datetime] = None,
+        **kwargs,
+    ) -> "CloudEvent":
+        return cls(
+            id=id or str(ULID()),
+            specversion=specversion or DEFAULT_SPECVERSION,
+            time=time or datetime.datetime.now(datetime.timezone.utc),
+            **kwargs,
+        )
 
     data: typing.Optional[typing.Any] = Field(
         title=FIELD_DESCRIPTIONS["data"].get("title"),
@@ -71,6 +82,8 @@ class CloudEvent(BaseModel):  # type: ignore
         examples=[FIELD_DESCRIPTIONS["data"].get("example")],
         default=None,
     )
+
+    # Mandatory fields
     source: URIReference = Field(
         title=FIELD_DESCRIPTIONS["source"].get("title"),
         description=FIELD_DESCRIPTIONS["source"].get("description"),
@@ -80,7 +93,6 @@ class CloudEvent(BaseModel):  # type: ignore
         title=FIELD_DESCRIPTIONS["id"].get("title"),
         description=FIELD_DESCRIPTIONS["id"].get("description"),
         examples=[FIELD_DESCRIPTIONS["id"].get("example")],
-        default_factory=default_ulid_str,
     )
     type: String = Field(
         title=FIELD_DESCRIPTIONS["type"].get("title"),
@@ -91,13 +103,14 @@ class CloudEvent(BaseModel):  # type: ignore
         title=FIELD_DESCRIPTIONS["specversion"].get("title"),
         description=FIELD_DESCRIPTIONS["specversion"].get("description"),
         examples=[FIELD_DESCRIPTIONS["specversion"].get("example")],
-        default=DEFAULT_SPECVERSION,
     )
-    time: DateTime = Field(
+
+    # Optional fields
+    time: typing.Optional[DateTime] = Field(
         title=FIELD_DESCRIPTIONS["time"].get("title"),
         description=FIELD_DESCRIPTIONS["time"].get("description"),
         examples=[FIELD_DESCRIPTIONS["time"].get("example")],
-        default_factory=attribute.default_time_selection_algorithm,
+        default=None,
     )
     subject: typing.Optional[String] = Field(
         title=FIELD_DESCRIPTIONS["subject"].get("title"),
