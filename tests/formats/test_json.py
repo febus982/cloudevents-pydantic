@@ -27,11 +27,11 @@ from typing import Any, Sequence
 from urllib.parse import ParseResult
 
 import pytest
-from cloudevents.sdk.event.attribute import SpecVersion
 from jsonschema import validate
 from pydantic import TypeAdapter
 
 from cloudevents_pydantic.events import CloudEvent
+from cloudevents_pydantic.events._event import SpecVersion
 from cloudevents_pydantic.events.field_types import Binary
 from cloudevents_pydantic.formats.json import (
     from_json,

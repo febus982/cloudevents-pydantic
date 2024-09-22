@@ -22,6 +22,7 @@
 # ==============================================================================
 import base64
 import typing
+from enum import Enum
 
 from cloudevents.pydantic.fields_docs import FIELD_DESCRIPTIONS
 from cloudevents.sdk.event import attribute
@@ -33,8 +34,30 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core.core_schema import ValidationInfo
+from ulid import ULID
 
 from .field_types import URI, DateTime, String, URIReference
+
+
+class SpecVersion(str, Enum):
+    """
+    The version of the CloudEvents specification which an event uses.
+    This enables the interpretation of the context.
+
+    Currently, this attribute will only have the 'major' and 'minor' version numbers
+    included in it. This allows for 'patch' changes to the specification to be made
+    without changing this property's value in the serialization.
+    """
+
+    # v0_3 = "0.3"
+    v1_0 = "1.0"
+
+
+DEFAULT_SPECVERSION = SpecVersion.v1_0
+
+
+def default_ulid_str():
+    return str(ULID())
 
 
 class CloudEvent(BaseModel):  # type: ignore
@@ -57,18 +80,18 @@ class CloudEvent(BaseModel):  # type: ignore
         title=FIELD_DESCRIPTIONS["id"].get("title"),
         description=FIELD_DESCRIPTIONS["id"].get("description"),
         examples=[FIELD_DESCRIPTIONS["id"].get("example")],
-        default_factory=attribute.default_id_selection_algorithm,
+        default_factory=default_ulid_str,
     )
     type: String = Field(
         title=FIELD_DESCRIPTIONS["type"].get("title"),
         description=FIELD_DESCRIPTIONS["type"].get("description"),
         examples=[FIELD_DESCRIPTIONS["type"].get("example")],
     )
-    specversion: attribute.SpecVersion = Field(
+    specversion: SpecVersion = Field(
         title=FIELD_DESCRIPTIONS["specversion"].get("title"),
         description=FIELD_DESCRIPTIONS["specversion"].get("description"),
         examples=[FIELD_DESCRIPTIONS["specversion"].get("example")],
-        default=attribute.DEFAULT_SPECVERSION,
+        default=DEFAULT_SPECVERSION,
     )
     time: DateTime = Field(
         title=FIELD_DESCRIPTIONS["time"].get("title"),

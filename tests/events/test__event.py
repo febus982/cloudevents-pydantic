@@ -23,13 +23,13 @@
 import datetime
 import json
 from urllib.parse import ParseResult
-from uuid import UUID
 
 import pytest
-from cloudevents.sdk.event.attribute import SpecVersion
 from pydantic import ValidationError
+from ulid import ULID
 
 from cloudevents_pydantic.events import CloudEvent
+from cloudevents_pydantic.events._event import SpecVersion
 
 test_attributes = {
     "type": "com.example.string",
@@ -41,7 +41,7 @@ test_full_attributes = {
     "dataschema": "http://some-dataschema.url",
     "id": "id-can-be-anything",
     "source": "dummy:source",
-    "specversion": "0.3",
+    "specversion": "1.0",
     "subject": "some-subject",
     "time": "2022-07-16T12:03:20.519216+04:00",
     "type": "dummy.type",
@@ -65,7 +65,7 @@ def test_defaults_are_populated():
     # defaults
     assert event.data is None
     assert isinstance(event.id, str)
-    assert UUID(event.id) is not None
+    assert ULID.from_str(event.id) is not None
     assert event.specversion is SpecVersion.v1_0
     assert isinstance(event.time, datetime.datetime)
     assert event.subject is None
@@ -82,7 +82,7 @@ def test_all_values_can_be_submitted():
     )
     assert event.data == test_full_attributes["data"]
     assert event.id == test_full_attributes["id"]
-    assert event.specversion is SpecVersion.v0_3
+    assert event.specversion is SpecVersion.v1_0
     assert event.time == datetime.datetime(
         year=2022,
         month=7,
@@ -128,7 +128,7 @@ def test_can_submit_datetime_object():
     )
     assert event.data == test_full_attributes["data"]
     assert event.id == test_full_attributes["id"]
-    assert event.specversion is SpecVersion.v0_3
+    assert event.specversion is SpecVersion.v1_0
     assert event.time == datetime.datetime(
         year=2020,
         month=7,
