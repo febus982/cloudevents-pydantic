@@ -21,7 +21,6 @@
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
 import base64
-import datetime
 import typing
 
 from cloudevents.pydantic.fields_docs import FIELD_DESCRIPTIONS
@@ -35,6 +34,8 @@ from pydantic import (
 )
 from pydantic_core.core_schema import ValidationInfo
 
+from .field_types import URI, DateTime, String, URIReference
+
 
 class CloudEvent(BaseModel):  # type: ignore
     """
@@ -47,18 +48,18 @@ class CloudEvent(BaseModel):  # type: ignore
         examples=[FIELD_DESCRIPTIONS["data"].get("example")],
         default=None,
     )
-    source: str = Field(
+    source: URIReference = Field(
         title=FIELD_DESCRIPTIONS["source"].get("title"),
         description=FIELD_DESCRIPTIONS["source"].get("description"),
         examples=[FIELD_DESCRIPTIONS["source"].get("example")],
     )
-    id: str = Field(
+    id: String = Field(
         title=FIELD_DESCRIPTIONS["id"].get("title"),
         description=FIELD_DESCRIPTIONS["id"].get("description"),
         examples=[FIELD_DESCRIPTIONS["id"].get("example")],
         default_factory=attribute.default_id_selection_algorithm,
     )
-    type: str = Field(
+    type: String = Field(
         title=FIELD_DESCRIPTIONS["type"].get("title"),
         description=FIELD_DESCRIPTIONS["type"].get("description"),
         examples=[FIELD_DESCRIPTIONS["type"].get("example")],
@@ -69,25 +70,25 @@ class CloudEvent(BaseModel):  # type: ignore
         examples=[FIELD_DESCRIPTIONS["specversion"].get("example")],
         default=attribute.DEFAULT_SPECVERSION,
     )
-    time: datetime.datetime = Field(
+    time: DateTime = Field(
         title=FIELD_DESCRIPTIONS["time"].get("title"),
         description=FIELD_DESCRIPTIONS["time"].get("description"),
         examples=[FIELD_DESCRIPTIONS["time"].get("example")],
         default_factory=attribute.default_time_selection_algorithm,
     )
-    subject: typing.Optional[str] = Field(
+    subject: typing.Optional[String] = Field(
         title=FIELD_DESCRIPTIONS["subject"].get("title"),
         description=FIELD_DESCRIPTIONS["subject"].get("description"),
         examples=[FIELD_DESCRIPTIONS["subject"].get("example")],
         default=None,
     )
-    datacontenttype: typing.Optional[str] = Field(
+    datacontenttype: typing.Optional[String] = Field(
         title=FIELD_DESCRIPTIONS["datacontenttype"].get("title"),
         description=FIELD_DESCRIPTIONS["datacontenttype"].get("description"),
         examples=[FIELD_DESCRIPTIONS["datacontenttype"].get("example")],
         default=None,
     )
-    dataschema: typing.Optional[str] = Field(
+    dataschema: typing.Optional[URI] = Field(
         title=FIELD_DESCRIPTIONS["dataschema"].get("title"),
         description=FIELD_DESCRIPTIONS["dataschema"].get("description"),
         examples=[FIELD_DESCRIPTIONS["dataschema"].get("example")],
@@ -119,7 +120,7 @@ class CloudEvent(BaseModel):  # type: ignore
     """
 
     @model_serializer(when_used="json")
-    def _base64_json_serializer(self) -> typing.Dict[str, typing.Any]:
+    def base64_json_serializer(self) -> typing.Dict[str, typing.Any]:
         """Takes care of handling binary data serialization into `data_base64`
         attribute.
 
@@ -128,16 +129,21 @@ class CloudEvent(BaseModel):  # type: ignore
         :return: Event serialized as a standard CloudEvent dict with binary
                  data handled.
         """
-        model_dict = self.model_dump()
-        if isinstance(model_dict["data"], (bytes, bytearray, memoryview)):
-            model_dict["data_base64"] = base64.b64encode(model_dict["data"])
+        model_dict = self.model_dump()  # type: ignore
+
+        if isinstance(self.data, (bytes, bytearray, memoryview)):
+            model_dict["data_base64"] = (
+                base64.b64encode(self.data)
+                if isinstance(self.data, (bytes, bytearray, memoryview))
+                else self.data
+            )
             del model_dict["data"]
 
         return model_dict
 
     @model_validator(mode="before")
     @classmethod
-    def _base64_data_parser(cls, data: typing.Any, info: ValidationInfo) -> typing.Any:
+    def base64_data_parser(cls, data: typing.Any, info: ValidationInfo) -> typing.Any:
         """Takes care of handling binary data deserialization from `data_base64`
         attribute.
 

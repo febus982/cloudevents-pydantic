@@ -23,13 +23,16 @@
 import datetime
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
+from urllib.parse import ParseResult
 
 import pytest
 from cloudevents.sdk.event.attribute import SpecVersion
 from jsonschema import validate
+from pydantic import TypeAdapter
 
 from cloudevents_pydantic.events import CloudEvent
+from cloudevents_pydantic.events.field_types import Binary
 from cloudevents_pydantic.formats.json import (
     from_json,
     from_json_batch,
@@ -46,6 +49,11 @@ test_attributes = {
 valid_json = '{"data":null,"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
 valid_json_batch = '[{"data":null,"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}]'
 
+
+class BinaryDataEvent(CloudEvent):
+    data: Binary
+
+
 with open(
     Path(__file__).parent.joinpath("cloudevents_jsonschema_1.0.2.json"),
     "r",
@@ -57,7 +65,14 @@ def test_from_json():
     event = from_json(valid_json)
 
     assert event.type == "com.example.string"
-    assert event.source == "https://example.com/event-producer"
+    assert event.source == ParseResult(
+        scheme="https",
+        netloc="example.com",
+        path="/event-producer",
+        params="",
+        query="",
+        fragment="",
+    )
     assert event.data is None
     assert event.id == "b96267e2-87be-4f7a-b87c-82f64360d954"
     assert event.specversion is SpecVersion.v1_0
@@ -83,7 +98,14 @@ def test_from_json_batch():
 
     event = events[0]
     assert event.type == "com.example.string"
-    assert event.source == "https://example.com/event-producer"
+    assert event.source == ParseResult(
+        scheme="https",
+        netloc="example.com",
+        path="/event-producer",
+        params="",
+        query="",
+        fragment="",
+    )
     assert event.data is None
     assert event.id == "b96267e2-87be-4f7a-b87c-82f64360d954"
     assert event.specversion is SpecVersion.v1_0
@@ -125,8 +147,10 @@ def test_to_json_batch():
         pytest.param(memoryview(b"test"), True, id="memoryview"),
     ],
 )
-@pytest.mark.parametrize("batch", [True, False])
-def test_to_json_base64(
+@pytest.mark.parametrize(
+    "batch", [pytest.param(True, id="batch"), pytest.param(False, id="single")]
+)
+def test_to_json_base64_with_any_type(
     data: Any,
     b64_expected: bool,
     batch: bool,
@@ -157,8 +181,12 @@ def test_to_json_base64(
         pytest.param("dGVzdA==", b"test", id='memoryview(b"test")'),
     ],
 )
-@pytest.mark.parametrize("batch", [True, False])
-def test_from_json_base64(b64_data: str, expected_value: type, batch: bool):
+@pytest.mark.parametrize(
+    "batch", [pytest.param(True, id="batch"), pytest.param(False, id="single")]
+)
+def test_from_json_base64_with_any_type(
+    b64_data: str, expected_value: type, batch: bool
+):
     json_string = (
         '{"data_base64":"'
         + b64_data
@@ -170,3 +198,69 @@ def test_from_json_base64(b64_data: str, expected_value: type, batch: bool):
     else:
         event = from_json(json_string)
     assert event.data == expected_value
+
+
+@pytest.mark.parametrize(
+    ["data", "b64_expected"],
+    [
+        pytest.param("test", True, id="string"),
+        pytest.param(b"test", True, id="bytes"),
+        pytest.param(bytearray([2, 3, 5, 7]), True, id="bytearray"),
+    ],
+)
+@pytest.mark.parametrize(
+    "batch", [pytest.param(True, id="batch"), pytest.param(False, id="single")]
+)
+def test_to_json_base64_with_binary_type(
+    data: Any,
+    b64_expected: bool,
+    batch: bool,
+):
+    input_attrs = test_attributes.copy()
+    input_attrs["data"] = data
+    event = BinaryDataEvent(**input_attrs)
+
+    json_repr = to_json_batch([event]) if batch else to_json(event)
+    parsed_json = json.loads(json_repr)
+    if batch:
+        parsed_json = parsed_json[0]
+
+    assert ('"data_base64":' in json_repr) is b64_expected
+    assert ('"data":' not in json_repr) is b64_expected
+    validate(parsed_json, cloudevent_schema)
+    assert ("data_base64" in parsed_json) is b64_expected
+    assert ("data" not in parsed_json) is b64_expected
+
+
+@pytest.mark.parametrize(
+    ["b64_data", "expected_value"],
+    [
+        pytest.param("dGVzdA==", b"test", id='b"test"'),
+        # It's impossible to automatically infer if the data is meant to be a bytearray
+        pytest.param("AgMFBw==", b"\x02\x03\x05\x07", id="bytearray([2, 3, 5, 7])"),
+        # b64encode serializes the memory view using the value
+        # (good for security, we don't want to send memory info around)
+        pytest.param("dGVzdA==", b"test", id='memoryview(b"test")'),
+    ],
+)
+@pytest.mark.parametrize(
+    "batch", [pytest.param(True, id="batch"), pytest.param(False, id="single")]
+)
+def test_from_json_base64_with_binary_type(
+    b64_data: str, expected_value: type, batch: bool
+):
+    json_string = (
+        '{"data_base64":"'
+        + b64_data
+        + '","source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
+    )
+
+    if batch:
+        event = from_json_batch(
+            "[" + json_string + "]",
+            batch_adapter=TypeAdapter(Sequence[BinaryDataEvent]),
+        )[0]
+    else:
+        event = from_json(json_string, BinaryDataEvent)
+    assert event.data == expected_value
+    assert isinstance(event, BinaryDataEvent)

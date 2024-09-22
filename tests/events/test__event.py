@@ -22,6 +22,7 @@
 # ==============================================================================
 import datetime
 import json
+from urllib.parse import ParseResult
 from uuid import UUID
 
 import pytest
@@ -52,7 +53,14 @@ def test_defaults_are_populated():
 
     # input data
     assert event.type == test_attributes["type"]
-    assert event.source == test_attributes["source"]
+    assert event.source == ParseResult(
+        scheme="https",
+        netloc="example.com",
+        path="/event-producer",
+        params="",
+        query="",
+        fragment="",
+    )
 
     # defaults
     assert event.data is None
@@ -69,7 +77,9 @@ def test_all_values_can_be_submitted():
     event = CloudEvent(**test_full_attributes)
 
     assert event.type == test_full_attributes["type"]
-    assert event.source == test_full_attributes["source"]
+    assert event.source == ParseResult(
+        scheme="dummy", netloc="", path="source", params="", query="", fragment=""
+    )
     assert event.data == test_full_attributes["data"]
     assert event.id == test_full_attributes["id"]
     assert event.specversion is SpecVersion.v0_3
@@ -85,7 +95,14 @@ def test_all_values_can_be_submitted():
     )
     assert event.subject == test_full_attributes["subject"]
     assert event.datacontenttype == test_full_attributes["datacontenttype"]
-    assert event.dataschema == test_full_attributes["dataschema"]
+    assert event.dataschema == ParseResult(
+        scheme="http",
+        netloc="some-dataschema.url",
+        path="",
+        params="",
+        query="",
+        fragment="",
+    )
 
 
 def test_can_submit_datetime_object():
@@ -106,7 +123,9 @@ def test_can_submit_datetime_object():
     event = CloudEvent(**attrs)
 
     assert event.type == test_full_attributes["type"]
-    assert event.source == test_full_attributes["source"]
+    assert event.source == ParseResult(
+        scheme="dummy", netloc="", path="source", params="", query="", fragment=""
+    )
     assert event.data == test_full_attributes["data"]
     assert event.id == test_full_attributes["id"]
     assert event.specversion is SpecVersion.v0_3
@@ -122,7 +141,14 @@ def test_can_submit_datetime_object():
     )
     assert event.subject == test_full_attributes["subject"]
     assert event.datacontenttype == test_full_attributes["datacontenttype"]
-    assert event.dataschema == test_full_attributes["dataschema"]
+    assert event.dataschema == ParseResult(
+        scheme="http",
+        netloc="some-dataschema.url",
+        path="",
+        params="",
+        query="",
+        fragment="",
+    )
 
 
 def test_data_base64_validation_fails_if_not_json():
