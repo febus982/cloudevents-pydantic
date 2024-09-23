@@ -12,53 +12,54 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 
-This template repository provides the boilerplate to create a python package.
-It is configured with all the following features:
+This is an implementation of the [CloudEvents spec](https://github.com/cloudevents/spec/tree/main) using
+[Pydantic V2](https://docs.pydantic.dev/latest/) for high performance during validation and serialization.
 
-* Test suite using [tox](https://tox.wiki/en/latest/index.html) and [pytest](https://docs.pytest.org/en/7.4.x/)
-* Typing using [mypy](https://mypy.readthedocs.io/en/stable/)
-* Linting, security and code format using [ruff](https://github.com/astral-sh/ruff) (using [black](https://pypi.org/project/black/)
-  code style and [bandit](https://github.com/PyCQA/bandit) security rules)
-* Integration with CodeClimate for code quality and coverage checks
-* CI pipeline supporting:
-    * testing against multiple python versions
-    * releases on [PyPI](https://pypi.org)
-    * GitHub pages documentation using [mkdocs](https://www.mkdocs.org)
-* PyCharm profile basic configuration
+Currently supported bindings:
 
-## How to use this repository template to create a new package
+| Binding | Format | Single  |  Batch  |
+|---------|:-------|:-------:|:-------:|
+| HTTP    | JSON   |    ✅    |    ✅    |
+| HTTP    | Binary | planned | planned |
+| KAFKA   | JSON   | planned | planned |
+| KAFKA   | Binary | planned | planned |
 
-* Configure a pending trusted publisher on [pypi](https://pypi.org/manage/account/publishing) using the following values:
-    * PyPI Project Name: The github repository name (in this case `cloudevents-pydantic`)
-    * Owner: The github repository owner (in this case `febus982`)
-    * Repository name: The github repository name (in this case `cloudevents-pydantic`)
-    * Workflow name: `release.yml`
-* Setup GitHub pages (this need local development setup):
-    * Initialise documentation branch `poetry run mike deploy dev latest --update-aliases --push`
-    * Configure GitHub Pages to deploy from the `gh-pages` branch (at URL `https://github.com/GITHUB_NAME_OR_ORGANIZATION/GITHUB_REPOSITORY/settings/pages`)
-    * Add the `main` branch and the `v*.*.*` tag rules to the "deployment branches and tags" list in the `gh-pages` environment (at URL `https://github.com/GITHUB_NAME_OR_ORGANIZATION/GITHUB_REPOSITORY/settings/environments`)
+## How to use
 
-**IMPORTANT:** The repository is configured to deploy on the [test PyPI repository](https://test.pypi.org/).
-It's strongly recommended to create the project in the [test PyPI repository](https://test.pypi.org/) and test
-the deployment pipeline. When you're happy with the result, create the project on the official [PyPI repository](https://pypi.org/)
-and remove the marked lines in `workflows/release.yml`.
+```shell
+pip install cloudevents-pydantic
+```
 
-## Package release
+```python
+from cloudevents_pydantic.bindings.http import HTTPHandler
+from cloudevents_pydantic.events import CloudEvent
 
-This setup uses [poetry-dynamic-versioning](https://github.com/mtkennerly/poetry-dynamic-versioning).
-This means it's not necessary to commit the version in the code but the CI pipeline
-will infer it from the git tag.
+handler = HTTPHandler()
+minimal_attributes = {
+    "type": "com.example.string",
+    "source": "https://example.com/event-producer",
+}
 
-To release a new version, just create a new release and tag in the GitHub repository, to:
+# `CloudEvent` is a Pydantic model to handle validation and serialization
+# `event_factory` is a helper method to autogenerate some of the mandatory 
+# such as id, time, specversion
+event = CloudEvent.event_factory(**minimal_attributes)
 
-* Build and deploy the python package to PyPI
-* Build and deploy a new version of the documentation to GitHub pages
+# Single event HTTP serialization
+headers, single_event_as_json = handler.to_json(event)
 
-**IMPORTANT:** The default configuration requires the release name and the tag to follow
-the convention `vX.X.X` (semantic versioning preceded by lowercase `v`). It will publish
-the correct version on Pypi, omitting the `v` (ie. `v1.0.0` will publish `1.0.0`).
+# Batch of events HTTP serialization
+headers, batch_of_events_as_json = handler.to_json_batch([event])
 
-This format can be customized, refer to [poetry-dynamic-versioning docs](https://github.com/mtkennerly/poetry-dynamic-versioning)
+# Parsing a JSON string for a single event
+parsed_event = handler.from_json(single_event_as_json)
+
+# Parsing a JSON string for a single event
+parsed_event_list = handler.from_json(batch_of_events_as_json)
+```
+
+Refer to the [docs](https://febus982.github.io/cloudevents-pydantic/) for more advanced use cases and
+for details on how to create custom events.
 
 ## Commands for development
 
