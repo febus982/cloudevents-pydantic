@@ -22,7 +22,9 @@
 # ==============================================================================
 import pytest
 from pydantic import BaseModel, ValidationError
+from typing_extensions import Literal, TypedDict
 
+from cloudevents_pydantic.events import CloudEvent
 from cloudevents_pydantic.events.field_types import (
     URI,
     Integer,
@@ -191,3 +193,37 @@ def test_success_with_valid_uri_reference(valid_uri):
         value: URIReference
 
     UriModel(value=valid_uri)
+
+
+def test_can_use_typed_dict_data_with_canonical_types():
+    class CustomData(TypedDict):
+        a_str: String
+        an_int: Integer
+
+    class AnotherEvent(CloudEvent):
+        data: CustomData
+        type: Literal["order_created"] = "order_created"
+        source: String = "some_service"
+
+    event = AnotherEvent.event_factory(
+        data={"a_str": "a nice string", "an_int": 1},
+    )
+
+    assert event.type == "order_created"
+    assert event.data == {"a_str": "a nice string", "an_int": 1}
+
+
+def test_validation_works_in_typed_dict_data_with_canonical_types():
+    class CustomData(TypedDict):
+        a_str: String
+        an_int: Integer
+
+    class AnotherEvent(CloudEvent):
+        data: CustomData
+        type: Literal["order_created"] = "order_created"
+        source: String = "some_service"
+
+    with pytest.raises(ValidationError):
+        AnotherEvent.event_factory(
+            data={"a_str": "a nice string", "an_int": 2147483649},
+        )
