@@ -31,6 +31,14 @@ _T = TypeVar("_T", bound=CloudEvent, default=CloudEvent)
 
 
 def to_json(event: CloudEvent) -> str:
+    """
+    Serializes an event in JSON format.
+
+    :param event: The event object to serialize
+    :type event: CloudEvent
+    :return: The headers and the body representation of the event
+    :rtype: str
+    """
     return event.model_dump_json()
 
 
@@ -39,6 +47,16 @@ def from_json(data: str) -> CloudEvent: ...
 @overload
 def from_json(data: str, event_class: Type[_T]) -> _T: ...
 def from_json(data: str, event_class: Type[CloudEvent] = CloudEvent) -> CloudEvent:
+    """
+    Deserializes an event from JSON format.
+
+    :param data: the JSON representation of the event
+    :type data: str
+    :param event_class: The event class to build
+    :type event_class: Type[CloudEvent]
+    :return: The deserialized event
+    :rtype: CloudEvent
+    """
     return event_class.model_validate_json(data)
 
 
@@ -46,6 +64,16 @@ def to_json_batch(
     events: List[_T],
     batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),
 ) -> str:
+    """
+    Serializes a list of events in JSON batch format.
+
+    :param events: The event object to serialize
+    :type events: List[CloudEvent]
+    :param batch_adapter: The pydantic TypeAdapter to use
+    :type: TypeAdapter[List[CloudEvent]]
+    :return: The serialized event batch
+    :rtype: str
+    """
     return batch_adapter.dump_json(events).decode()
 
 
@@ -53,4 +81,14 @@ def from_json_batch(
     data: str,
     batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),
 ) -> List[_T]:
+    """
+    Deserializes a list of events from JSON batch format.
+
+    :param data: The JSON representation of the event batch
+    :type data: str
+    :param batch_adapter: The pydantic TypeAdapter to use
+    :type: TypeAdapter[List[CloudEvent]]
+    :return: The deserialized event batch
+    :rtype: List[CloudEvent]
+    """
     return batch_adapter.validate_json(data)
