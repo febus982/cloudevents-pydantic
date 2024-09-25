@@ -56,10 +56,10 @@ class HTTPHandler(Generic[_T]):
         """
         Serializes an event in JSON format.
 
-        :param event: the event object to serialize
-        :type event: :class:`cloudevents_pydantic.events.CloudEvent`
+        :param event: The event object to serialize
+        :type event: CloudEvent
         :return: The headers and the body representation of the event
-        :rtype: :class:`cloudevents_pydantic.bindings.http.HTTPHandler`
+        :rtype: HTTPComponents
         """
         headers = {"content-type": "application/cloudevents+json; charset=UTF-8"}
         body = json.to_json(event)
@@ -69,10 +69,10 @@ class HTTPHandler(Generic[_T]):
         """
         Serializes a list of events in JSON batch format.
 
-        :param events: the event object to serialize
-        :type events: `List[cloudevents_pydantic.events.CloudEvent]`
+        :param events: The event object to serialize
+        :type events: List[CloudEvent]
         :return: The headers and the body representation of the event batch
-        :rtype: :class:`cloudevents_pydantic.bindings.http.HTTPHandler`
+        :rtype: HTTPComponents
         """
         headers = {"content-type": "application/cloudevents-batch+json; charset=UTF-8"}
         body = json.to_json_batch(events, self.batch_adapter)
@@ -85,9 +85,10 @@ class HTTPHandler(Generic[_T]):
         """
         Deserializes an event from JSON format.
 
-        :param body: the JSON representation of the event
+        :param body: The JSON representation of the event
+        :type body: str
         :return: The deserialized event
-        :rtype: :class:`cloudevents_pydantic.events.CloudEvent`
+        :rtype: CloudEvent
         """
         return json.from_json(body, self.event_class)
 
@@ -98,8 +99,9 @@ class HTTPHandler(Generic[_T]):
         """
         Deserializes a list of events from JSON batch format.
 
-        :param body: the JSON representation of the event batch
+        :param body: The JSON representation of the event batch
+        :type body: str
         :return: The deserialized event batch
-        :rtype: List[:class:`cloudevents_pydantic.events.CloudEvent`]
+        :rtype: List[CloudEvent]
         """
         return json.from_json_batch(body, self.batch_adapter)
