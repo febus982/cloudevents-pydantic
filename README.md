@@ -61,6 +61,28 @@ parsed_event_list = handler.from_json(batch_of_events_as_json)
 Refer to the [docs](https://febus982.github.io/cloudevents-pydantic/) for more advanced use cases and
 for details on how to create custom events.
 
+## Performance
+
+Using pydantic gives a great performance boost if compared to the official SDK. (there's obviously
+some performance issue in the official serialization using pydantic)
+
+These results come from a Macbook Pro M3 Max on python 3.12. Feel free to run the `benchmark.py`
+script yourself.
+
+```shell
+Timings for HTTP JSON deserialization:
+This package: 2.5353065830422565
+Official SDK with pydantic model: 12.80780174996471
+Official SDK with http model: 11.474249749968294
+
+Timings for HTTP JSON serialization:
+This package: 3.4850796660175547
+Official SDK with pydantic model: 39.037468083028216
+Official SDK with http model: 7.681282749981619
+
+```
+
+
 ## Commands for development
 
 All the common commands used during development can be run using make targets:
