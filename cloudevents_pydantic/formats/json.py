@@ -20,7 +20,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
-from typing import Sequence, Type
+from typing import List, Type
 
 from pydantic import TypeAdapter
 from typing_extensions import TypeVar, overload
@@ -43,14 +43,14 @@ def from_json(data: str, event_class: Type[CloudEvent] = CloudEvent) -> CloudEve
 
 
 def to_json_batch(
-    events: Sequence[_T],
-    batch_adapter: TypeAdapter[Sequence[_T]] = TypeAdapter(Sequence[CloudEvent]),
+    events: List[_T],
+    batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),
 ) -> str:
     return batch_adapter.dump_json(events).decode()
 
 
 def from_json_batch(
     data: str,
-    batch_adapter: TypeAdapter[Sequence[_T]] = TypeAdapter(Sequence[CloudEvent]),
-) -> Sequence[_T]:
+    batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),
+) -> List[_T]:
     return batch_adapter.validate_json(data)

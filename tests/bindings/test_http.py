@@ -20,7 +20,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
-from typing import List, Sequence
+from typing import List
 from unittest.mock import patch
 
 import pytest
@@ -100,13 +100,13 @@ def from_json_batch_spy():
 def test_initialization_defaults_to_cloudevents(type_adapter_init_mock):
     handler = HTTPHandler()
     assert handler.event_class is CloudEvent
-    type_adapter_init_mock.assert_called_once_with(Sequence[CloudEvent])
+    type_adapter_init_mock.assert_called_once_with(List[CloudEvent])
 
 
 def test_initialization_uses_provided_event_class(type_adapter_init_mock):
     handler = HTTPHandler(event_class=SomeEvent)
     assert handler.event_class is SomeEvent
-    type_adapter_init_mock.assert_called_once_with(Sequence[SomeEvent])
+    type_adapter_init_mock.assert_called_once_with(List[SomeEvent])
 
 
 @pytest.mark.parametrize(

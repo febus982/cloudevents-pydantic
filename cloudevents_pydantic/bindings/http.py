@@ -23,8 +23,8 @@
 from typing import (
     Dict,
     Generic,
+    List,
     NamedTuple,
-    Sequence,
     Type,
     cast,
 )
@@ -45,12 +45,12 @@ class HTTPComponents(NamedTuple):
 
 class HTTPHandler(Generic[_T]):
     event_class: Type[_T]
-    batch_adapter: TypeAdapter[Sequence[_T]]
+    batch_adapter: TypeAdapter[List[_T]]
 
     def __init__(self, event_class: Type[_T] = cast(Type[_T], CloudEvent)) -> None:
         super().__init__()
         self.event_class = event_class
-        self.batch_adapter = TypeAdapter(Sequence[event_class])  # type: ignore[valid-type]
+        self.batch_adapter = TypeAdapter(List[event_class])  # type: ignore[valid-type]
 
     def to_json(self, event: _T) -> HTTPComponents:
         """
@@ -65,7 +65,7 @@ class HTTPHandler(Generic[_T]):
         body = json.to_json(event)
         return HTTPComponents(headers, body)
 
-    def to_json_batch(self, events: Sequence[_T]) -> HTTPComponents:
+    def to_json_batch(self, events: List[_T]) -> HTTPComponents:
         """
         Serializes a list of events in JSON batch format.
 
@@ -94,12 +94,12 @@ class HTTPHandler(Generic[_T]):
     def from_json_batch(
         self,
         body: str,
-    ) -> Sequence[_T]:
+    ) -> List[_T]:
         """
         Deserializes a list of events from JSON batch format.
 
         :param body: the JSON representation of the event batch
         :return: The deserialized event batch
-        :rtype: Sequence[:class:`cloudevents_pydantic.events.CloudEvent`]
+        :rtype: List[:class:`cloudevents_pydantic.events.CloudEvent`]
         """
         return json.from_json_batch(body, self.batch_adapter)
