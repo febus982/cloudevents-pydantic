@@ -70,8 +70,9 @@ extra:
     default: stable
 
 markdown_extensions:
-  - pymdownx.details
   - pymdownx.blocks.admonition
   - pymdownx.blocks.details
+  - pymdownx.blocks.tab:
+      alternate_style: true
   - pymdownx.snippets
   - pymdownx.superfences

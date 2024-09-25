@@ -23,8 +23,8 @@
 from typing import (
     Dict,
     Generic,
+    NamedTuple,
     Sequence,
-    Tuple,
     Type,
     cast,
 )
@@ -38,6 +38,11 @@ from cloudevents_pydantic.formats import json
 _T = TypeVar("_T", bound=CloudEvent, default=CloudEvent)
 
 
+class HTTPComponents(NamedTuple):
+    headers: Dict[str, str]
+    body: str
+
+
 class HTTPHandler(Generic[_T]):
     event_class: Type[_T]
     batch_adapter: TypeAdapter[Sequence[_T]]
@@ -47,24 +52,54 @@ class HTTPHandler(Generic[_T]):
         self.event_class = event_class
         self.batch_adapter = TypeAdapter(Sequence[event_class])  # type: ignore[valid-type]
 
-    def to_json(self, event: _T) -> Tuple[Dict[str, str], str]:
-        headers = {"content-type": "application/cloudevents+json; charset=UTF-8"}
-        data = json.to_json(event)
-        return headers, data
+    def to_json(self, event: _T) -> HTTPComponents:
+        """
+        Serializes an event in JSON format.
 
-    def to_json_batch(self, events: Sequence[_T]) -> Tuple[Dict[str, str], str]:
+        :param event: the event object to serialize
+        :type event: :class:`cloudevents_pydantic.events.CloudEvent`
+        :return: The headers and the body representation of the event
+        :rtype: :class:`cloudevents_pydantic.bindings.http.HTTPHandler`
+        """
+        headers = {"content-type": "application/cloudevents+json; charset=UTF-8"}
+        body = json.to_json(event)
+        return HTTPComponents(headers, body)
+
+    def to_json_batch(self, events: Sequence[_T]) -> HTTPComponents:
+        """
+        Serializes a list of events in JSON batch format.
+
+        :param events: the event object to serialize
+        :type events: `List[cloudevents_pydantic.events.CloudEvent]`
+        :return: The headers and the body representation of the event batch
+        :rtype: :class:`cloudevents_pydantic.bindings.http.HTTPHandler`
+        """
         headers = {"content-type": "application/cloudevents-batch+json; charset=UTF-8"}
-        data = json.to_json_batch(events, self.batch_adapter)
-        return headers, data
+        body = json.to_json_batch(events, self.batch_adapter)
+        return HTTPComponents(headers, body)
 
     def from_json(
         self,
         body: str,
     ) -> CloudEvent:
+        """
+        Deserializes an event from JSON format.
+
+        :param body: the JSON representation of the event
+        :return: The deserialized event
+        :rtype: :class:`cloudevents_pydantic.events.CloudEvent`
+        """
         return json.from_json(body, self.event_class)
 
     def from_json_batch(
         self,
         body: str,
     ) -> Sequence[_T]:
+        """
+        Deserializes a list of events from JSON batch format.
+
+        :param body: the JSON representation of the event batch
+        :return: The deserialized event batch
+        :rtype: Sequence[:class:`cloudevents_pydantic.events.CloudEvent`]
+        """
         return json.from_json_batch(body, self.batch_adapter)
