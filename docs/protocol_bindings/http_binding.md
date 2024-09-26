@@ -1,5 +1,3 @@
-from benchmark import eventfrom benchmark import http_handler
-
 # HTTP binding
 
 Using the HTTP binding handler is straightforward. Just remember to reuse the same
