@@ -23,7 +23,6 @@
 import base64
 import datetime
 import typing
-from enum import Enum
 
 from cloudevents.pydantic.fields_docs import FIELD_DESCRIPTIONS
 from pydantic import (
@@ -36,24 +35,8 @@ from pydantic import (
 from pydantic_core.core_schema import ValidationInfo
 from ulid import ULID
 
-from .field_types import URI, DateTime, String, URIReference
-
-
-class SpecVersion(str, Enum):
-    """
-    The version of the CloudEvents specification which an event uses.
-    This enables the interpretation of the context.
-
-    Currently, this attribute will only have the 'major' and 'minor' version numbers
-    included in it. This allows for 'patch' changes to the specification to be made
-    without changing this property's value in the serialization.
-    """
-
-    # v0_3 = "0.3"
-    v1_0 = "1.0"
-
-
-DEFAULT_SPECVERSION = SpecVersion.v1_0
+from .field_types import URI, DateTime, SpecVersion, String, URIReference
+from .field_types._canonic_types import DEFAULT_SPECVERSION
 
 
 class CloudEvent(BaseModel):  # type: ignore

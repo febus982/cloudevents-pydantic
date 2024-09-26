@@ -22,6 +22,7 @@
 # ==============================================================================
 import base64
 from datetime import datetime
+from enum import Enum
 from urllib.parse import ParseResult, urlparse, urlunparse
 
 from annotated_types import Ge, Le
@@ -94,3 +95,20 @@ URIReference = Annotated[
     ParseResult, PlainValidator(generic_uri_validator), PlainSerializer(url_serializer)
 ]
 DateTime = datetime
+
+
+class SpecVersion(str, Enum):
+    """
+    The version of the CloudEvents specification which an event uses.
+    This enables the interpretation of the context.
+
+    Currently, this attribute will only have the 'major' and 'minor' version numbers
+    included in it. This allows for 'patch' changes to the specification to be made
+    without changing this property's value in the serialization.
+    """
+
+    # v0_3 = "0.3"
+    v1_0 = "1.0"
+
+
+DEFAULT_SPECVERSION = SpecVersion.v1_0

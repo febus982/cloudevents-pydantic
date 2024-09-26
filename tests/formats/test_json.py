@@ -31,8 +31,7 @@ from jsonschema import validate
 from pydantic import TypeAdapter, ValidationError
 
 from cloudevents_pydantic.events import CloudEvent
-from cloudevents_pydantic.events._event import SpecVersion
-from cloudevents_pydantic.events.field_types import Binary
+from cloudevents_pydantic.events.field_types import Binary, SpecVersion
 from cloudevents_pydantic.formats.json import (
     from_json,
     from_json_batch,
