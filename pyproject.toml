@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "cloudevents-pydantic"
 version = "0.0.0"
-description = "A manager to easily handle multiple SQLAlchemy configurations"
+description = "An implementation of the CloudEvents spec using Pydantic V2"
 license = "MIT"
 authors = ["Federico Busetti <729029+febus982@users.noreply.github.com>"]
 repository = "https://github.com/febus982/cloudevents-pydantic"
@@ -10,8 +10,9 @@ readme = "README.md"
 packages = [{include = "cloudevents_pydantic"}]
 #keywords = ["add", "keywords", "here"]
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Framework :: AsyncIO",
+    "Development Status :: 2 - Pre-Alpha",
+    "Framework :: Pydantic",
+    "Framework :: Pydantic :: 2",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
@@ -27,7 +28,7 @@ classifiers = [
 ]
 
 [tool.poetry-dynamic-versioning]
-enable = false
+enable = true
 
 [build-system]
 requires = ["poetry-core", "poetry-dynamic-versioning"]
