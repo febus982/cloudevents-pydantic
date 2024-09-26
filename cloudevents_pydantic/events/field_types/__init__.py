@@ -21,5 +21,13 @@
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
 
-__version__ = "0.0.0"
-__version_tuple__ = (0, 0, 0)
+from ._canonic_types import (
+    URI,
+    Binary,
+    Boolean,
+    DateTime,
+    Integer,
+    SpecVersion,
+    String,
+    URIReference,
+)

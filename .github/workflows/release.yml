@@ -68,12 +68,7 @@ jobs:
 
       - name: Publish package distributions to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        ################################
-        # REMOVE CUSTOM REPOSITORY TO  #
-        # PUBLISH ON OFFICIAL PYPI     #
-        ################################
-        with:
-          repository-url: https://test.pypi.org/legacy/
+
 
   site:
     needs: build
