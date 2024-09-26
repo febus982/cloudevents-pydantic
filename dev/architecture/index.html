@@ -29,32 +29,32 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="A manager to easily handle multiple SQLAlchemy configurations">
+        <meta name="description" content="An implementation of the CloudEvents spec using pydantic">
       
       
         <meta name="author" content="Federico Busetti">
       
       
       
-        <link rel="prev" href="../0001-record-architecture-decisions/">
+        <link rel="prev" href="..">
       
       
-        <link rel="next" href="../summary/">
+        <link rel="next" href="../event_class/">
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.36">
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.38">
     
     
       
-        <title>Adr template - Bootstrap python package</title>
+        <title>Architecture - Cloudevents pydantic</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.06209087.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.8c3ca2c6.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -73,9 +73,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
-    
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -101,7 +99,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#source-httpsgithubcomadrmadrblob300templateadr-templatemd" class="md-skip">
+        <a href="#architecture" class="md-skip">
           Skip to content
         </a>
       
@@ -116,7 +114,7 @@
             <div class="md-banner__inner md-grid md-typeset">
               
   You're not viewing the latest version.
-  <a href="../../..">
+  <a href="../..">
     <strong>Click here to go to latest.</strong>
   </a>
 
@@ -133,7 +131,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Bootstrap python package" class="md-header__button md-logo" aria-label="Bootstrap python package" data-md-component="logo">
+    <a href=".." title="Cloudevents pydantic" class="md-header__button md-logo" aria-label="Cloudevents pydantic" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -147,13 +145,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Bootstrap python package
+            Cloudevents pydantic
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Adr template
+              Architecture
             
           </span>
         </div>
@@ -276,13 +274,13 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Bootstrap python package" class="md-nav__button md-logo" aria-label="Bootstrap python package" data-md-component="logo">
+    <a href=".." title="Cloudevents pydantic" class="md-nav__button md-logo" aria-label="Cloudevents pydantic" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    Bootstrap python package
+    Cloudevents pydantic
   </label>
   
     <div class="md-nav__source">
@@ -306,7 +304,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -323,51 +321,44 @@
       
   
   
+    
   
   
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
       
         
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
-            
   
   <span class="md-ellipsis">
-    API Reference
+    Architecture
   </span>
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
-            API Reference
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
+      </a>
+      
+    </li>
+  
+
+    
+      
+      
   
   
   
   
     <li class="md-nav__item">
-      <a href="../../API-Reference/" class="md-nav__link">
+      <a href="../event_class/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Index
+    Event class
   </span>
   
 
@@ -375,10 +366,9 @@
     </li>
   
 
-              
-            
-              
-                
+    
+      
+      
   
   
   
@@ -393,24 +383,24 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
         
           
-          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
             
   
   <span class="md-ellipsis">
-    Bindings
+    Protocol bindings
   </span>
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_2">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
-            Bindings
+            Protocol bindings
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -421,461 +411,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../API-Reference/bindings/" class="md-nav__link">
+      <a href="../protocol_bindings/http_binding/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Index
+    HTTP binding
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../API-Reference/bindings/http/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Http
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Events
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_3">
-            <span class="md-nav__icon md-icon"></span>
-            Events
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../API-Reference/events/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Index
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../API-Reference/events/_event/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-     event
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_3_3" id="__nav_2_3_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Extensions
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_3_3">
-            <span class="md-nav__icon md-icon"></span>
-            Extensions
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../API-Reference/events/extensions/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Index
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_3_4" id="__nav_2_3_4_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Field types
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_3_4">
-            <span class="md-nav__icon md-icon"></span>
-            Field types
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../API-Reference/events/field_types/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Index
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../API-Reference/events/field_types/_canonic_types/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-     canonic types
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Formats
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_4">
-            <span class="md-nav__icon md-icon"></span>
-            Formats
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../API-Reference/formats/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Index
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../API-Reference/formats/json/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Json
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    ADR
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            ADR
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../summary/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Summary
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../0001-record-architecture-decisions/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Use Markdown Any Decision Records V3
-  </span>
-  
-    
-  
-  
-    <span class="md-status md-status--accepted"></span>
-  
-
   
 
       </a>
@@ -927,77 +468,20 @@
   
 
 
-<hr />
-<h1 id="source-httpsgithubcomadrmadrblob300templateadr-templatemd">source: https://github.com/adr/madr/blob/3.0.0/template/adr-template.md</h1>
-<h1 id="these-are-optional-elements-feel-free-to-remove-any-of-them">These are optional elements. Feel free to remove any of them.</h1>
-<p>status: {proposed | rejected | accepted | deprecated | … | superseded by <a href="0005-example.md">ADR-0005</a>}
-date: {YYYY-MM-DD when the decision was last updated}
-deciders: {list everyone involved in the decision}
-consulted: {list everyone whose opinions are sought (typically subject-matter experts); and with whom there is a two-way communication}
-informed: {list everyone who is kept up-to-date on progress; and with whom there is a one-way communication}</p>
-<hr />
-<h1 id="short-title-of-solved-problem-and-solution">{short title of solved problem and solution}</h1>
-<h2 id="context-and-problem-statement">Context and Problem Statement</h2>
-<p>{Describe the context and problem statement, e.g., in free form using two to three sentences or in the form of an illustrative story.
- You may want to articulate the problem in form of a question and add links to collaboration boards or issue management systems.}</p>
-<!-- This is an optional element. Feel free to remove. -->
-<h2 id="decision-drivers">Decision Drivers</h2>
+<h1 id="architecture">Architecture</h1>
+<p>The package is structured following the same structure as <a href="https://github.com/cloudevents/spec/tree/main">CloudEvents spec</a>
+in the following modules:</p>
 <ul>
-<li>{decision driver 1, e.g., a force, facing concern, …}</li>
-<li>{decision driver 2, e.g., a force, facing concern, …}</li>
-<li>… <!-- numbers of drivers can vary --></li>
+<li><code>events</code> implements the base <code>CloudEvent</code> model, required fields and canonical data types serialization.</li>
+<li><code>formats</code> implements the logic for serialization and deserialization between the <code>CloudEvent</code> model
+  and formats (<a href="https://github.com/cloudevents/spec/blob/main/cloudevents/formats/json-format.md">JSON</a>,
+  <a href="https://github.com/cloudevents/spec/blob/main/cloudevents/formats/avro-format.md">AVRO</a>, etc.). These are
+  not usually used directly.</li>
+<li><code>bindings</code> implements the logic for serialization and deserialization between the <code>CloudEvent</code> model
+  and protocol bindings (HTTP, KAFKA, etc.). It reuses functions from <code>formats</code> when necessary (i.e. <a href="https://github.com/cloudevents/spec/blob/main/cloudevents/bindings/http-protocol-binding.md#32-structured-content-mode">HTTP in
+  structured JSON mode</a>
+  will use the already implemented JSON format)</li>
 </ul>
-<h2 id="considered-options">Considered Options</h2>
-<ul>
-<li>{title of option 1}</li>
-<li>{title of option 2}</li>
-<li>{title of option 3}</li>
-<li>… <!-- numbers of options can vary --></li>
-</ul>
-<h2 id="decision-outcome">Decision Outcome</h2>
-<p>Chosen option: "{title of option 1}", because
-{justification. e.g., only option, which meets k.o. criterion decision driver | which resolves force {force} | … | comes out best (see below)}.</p>
-<!-- This is an optional element. Feel free to remove. -->
-<h3 id="consequences">Consequences</h3>
-<ul>
-<li>Good, because {positive consequence, e.g., improvement of one or more desired qualities, …}</li>
-<li>Bad, because {negative consequence, e.g., compromising one or more desired qualities, …}</li>
-<li>… <!-- numbers of consequences can vary --></li>
-</ul>
-<!-- This is an optional element. Feel free to remove. -->
-<h2 id="validation">Validation</h2>
-<p>{describe how the implementation of/compliance with the ADR is validated. E.g., by a review or an ArchUnit test}</p>
-<!-- This is an optional element. Feel free to remove. -->
-<h2 id="pros-and-cons-of-the-options">Pros and Cons of the Options</h2>
-<h3 id="title-of-option-1">{title of option 1}</h3>
-<!-- This is an optional element. Feel free to remove. -->
-<p>{example | description | pointer to more information | …}</p>
-<ul>
-<li>Good, because {argument a}</li>
-<li>Good, because {argument b}</li>
-</ul>
-<!-- use "neutral" if the given argument weights neither for good nor bad -->
-<ul>
-<li>Neutral, because {argument c}</li>
-<li>Bad, because {argument d}</li>
-<li>… <!-- numbers of pros and cons can vary --></li>
-</ul>
-<h3 id="title-of-other-option">{title of other option}</h3>
-<p>{example | description | pointer to more information | …}</p>
-<ul>
-<li>Good, because {argument a}</li>
-<li>Good, because {argument b}</li>
-<li>Neutral, because {argument c}</li>
-<li>Bad, because {argument d}</li>
-<li>…</li>
-</ul>
-<!-- This is an optional element. Feel free to remove. -->
-<h2 id="more-information">More Information</h2>
-<p>{You might want to provide additional evidence/confidence for the decision outcome here and/or
- document the team agreement on the decision and/or
- define when this decision when and how the decision should be realized and if/when it should be re-visited and/or
- how the decision is validated.
- Links to other decisions and resources might here appear as well.}</p>
 
 
 
@@ -1065,10 +549,10 @@ informed: {list everyone who is kept up-to-date on progress; and with whom there
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.expand", "navigation.top", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "stable", "provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.expand", "navigation.top", "content.code.copy"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "stable", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.56dfad97.min.js"></script>
+      <script src="../assets/javascripts/bundle.d6f25eb3.min.js"></script>
       
     
   </body>

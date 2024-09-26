@@ -29,7 +29,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="A manager to easily handle multiple SQLAlchemy configurations">
+        <meta name="description" content="An implementation of the CloudEvents spec using pydantic">
       
       
         <meta name="author" content="Federico Busetti">
@@ -37,19 +37,19 @@
       
       
       
-        <link rel="next" href="API-Reference/">
+        <link rel="next" href="architecture/">
       
       
       <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.36">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.38">
     
     
       
-        <title>Bootstrap python package</title>
+        <title>Cloudevents pydantic</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.06209087.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.8c3ca2c6.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
@@ -70,8 +70,6 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-    
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
     
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -131,7 +129,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="Bootstrap python package" class="md-header__button md-logo" aria-label="Bootstrap python package" data-md-component="logo">
+    <a href="." title="Cloudevents pydantic" class="md-header__button md-logo" aria-label="Cloudevents pydantic" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -145,7 +143,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Bootstrap python package
+            Cloudevents pydantic
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -274,13 +272,13 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="Bootstrap python package" class="md-nav__button md-logo" aria-label="Bootstrap python package" data-md-component="logo">
+    <a href="." title="Cloudevents pydantic" class="md-nav__button md-logo" aria-label="Cloudevents pydantic" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    Bootstrap python package
+    Cloudevents pydantic
   </label>
   
     <div class="md-nav__source">
@@ -350,18 +348,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#how-to-use-this-repository-template-to-create-a-new-package" class="md-nav__link">
+  <a href="#how-to-use" class="md-nav__link">
     <span class="md-ellipsis">
-      How to use this repository template to create a new package
+      How to use
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#package-release" class="md-nav__link">
+  <a href="#performance" class="md-nav__link">
     <span class="md-ellipsis">
-      Package release
+      Performance
     </span>
   </a>
   
@@ -390,49 +388,12 @@
   
   
   
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    API Reference
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
-            API Reference
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
     <li class="md-nav__item">
-      <a href="API-Reference/" class="md-nav__link">
+      <a href="architecture/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Index
+    Architecture
   </span>
   
 
@@ -440,425 +401,23 @@
     </li>
   
 
-              
-            
-              
-                
-  
-  
-  
-  
     
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Bindings
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_2">
-            <span class="md-nav__icon md-icon"></span>
-            Bindings
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
+      
   
   
   
   
     <li class="md-nav__item">
-      <a href="API-Reference/bindings/" class="md-nav__link">
+      <a href="event_class/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Index
+    Event class
   </span>
   
 
       </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="API-Reference/bindings/http/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Http
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Events
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_3">
-            <span class="md-nav__icon md-icon"></span>
-            Events
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="API-Reference/events/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Index
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="API-Reference/events/_event/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-     event
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_3_3" id="__nav_2_3_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Extensions
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_3_3">
-            <span class="md-nav__icon md-icon"></span>
-            Extensions
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="API-Reference/events/extensions/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Index
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_3_4" id="__nav_2_3_4_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Field types
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_3_4">
-            <span class="md-nav__icon md-icon"></span>
-            Field types
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="API-Reference/events/field_types/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Index
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="API-Reference/events/field_types/_canonic_types/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-     canonic types
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Formats
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_4">
-            <span class="md-nav__icon md-icon"></span>
-            Formats
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="API-Reference/formats/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Index
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="API-Reference/formats/json/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Json
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -879,24 +438,24 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
             
   
   <span class="md-ellipsis">
-    ADR
+    Protocol bindings
   </span>
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
-            ADR
+            Protocol bindings
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -907,40 +466,12 @@
   
   
     <li class="md-nav__item">
-      <a href="adr/summary/" class="md-nav__link">
+      <a href="protocol_bindings/http_binding/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Summary
+    HTTP binding
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="adr/0001-record-architecture-decisions/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Use Markdown Any Decision Records V3
-  </span>
-  
-    
-  
-  
-    <span class="md-status md-status--accepted"></span>
-  
-
   
 
       </a>
@@ -983,18 +514,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#how-to-use-this-repository-template-to-create-a-new-package" class="md-nav__link">
+  <a href="#how-to-use" class="md-nav__link">
     <span class="md-ellipsis">
-      How to use this repository template to create a new package
+      How to use
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#package-release" class="md-nav__link">
+  <a href="#performance" class="md-nav__link">
     <span class="md-ellipsis">
-      Package release
+      Performance
     </span>
   </a>
   
@@ -1028,81 +559,101 @@
 
 
 <h1 id="cloudevents-pydantic">cloudevents-pydantic</h1>
-<p><img alt="Static Badge" src="https://img.shields.io/badge/Python-3.8_%7C_3.9_%7C_3.10_%7C_3.11_%7C_3.12-blue?logo=python&amp;logoColor=white" />
+<p><img alt="Static Badge" src="https://img.shields.io/badge/Python-3.9_%7C_3.10_%7C_3.11_%7C_3.12-blue?logo=python&amp;logoColor=white" />
 <a href="https://pypi.org/project/cloudevents-pydantic/"><img alt="Stable Version" src="https://img.shields.io/pypi/v/cloudevents-pydantic?color=blue" /></a>
-<a href="https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#beta"><img alt="stability-beta" src="https://img.shields.io/badge/stability-beta-33bbff.svg" /></a></p>
+<a href="https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#work-in-progress"><img alt="stability-wip" src="https://img.shields.io/badge/stability-wip-lightgrey.svg" /></a></p>
 <p><a href="https://github.com/febus982/cloudevents-pydantic/actions/workflows/python-tests.yml"><img alt="Python tests" src="https://github.com/febus982/cloudevents-pydantic/actions/workflows/python-tests.yml/badge.svg?branch=main" /></a>
-<a href="https://codeclimate.com/github/febus982/cloudevents-pydantic/maintainability"><img alt="Maintainability" src="https://api.codeclimate.com/v1/badges/593e78ec96ed5ebb0dd3/maintainability" /></a>
-<a href="https://codeclimate.com/github/febus982/cloudevents-pydantic/test_coverage"><img alt="Test Coverage" src="https://api.codeclimate.com/v1/badges/593e78ec96ed5ebb0dd3/test_coverage" /></a></p>
+<a href="https://codeclimate.com/github/febus982/cloudevents-pydantic/maintainability"><img alt="Maintainability" src="https://api.codeclimate.com/v1/badges/c7fe3ebcadd850d7ed3f/maintainability" /></a>
+<a href="https://codeclimate.com/github/febus982/cloudevents-pydantic/test_coverage"><img alt="Test Coverage" src="https://api.codeclimate.com/v1/badges/c7fe3ebcadd850d7ed3f/test_coverage" /></a></p>
 <p><a href="https://mypy-lang.org/"><img alt="Checked with mypy" src="https://www.mypy-lang.org/static/mypy_badge.svg" /></a>
 <a href="https://github.com/charliermarsh/ruff"><img alt="Ruff" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json" /></a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg" /></a>
 <a href="https://github.com/PyCQA/bandit"><img alt="security: bandit" src="https://img.shields.io/badge/security-bandit-yellow.svg" /></a></p>
-<p>This template repository provides the boilerplate to create a python package.
-It is configured with all the following features:</p>
-<ul>
-<li>Test suite using <a href="https://tox.wiki/en/latest/index.html">tox</a> and <a href="https://docs.pytest.org/en/7.4.x/">pytest</a></li>
-<li>Typing using <a href="https://mypy.readthedocs.io/en/stable/">mypy</a></li>
-<li>Linting, security and code format using <a href="https://github.com/astral-sh/ruff">ruff</a> (using <a href="https://pypi.org/project/black/">black</a>
-  code style and <a href="https://github.com/PyCQA/bandit">bandit</a> security rules)</li>
-<li>Integration with CodeClimate for code quality and coverage checks</li>
-<li>CI pipeline supporting:<ul>
-<li>testing against multiple python versions</li>
-<li>releases on <a href="https://pypi.org">PyPI</a></li>
-<li>GitHub pages documentation using <a href="https://www.mkdocs.org">mkdocs</a></li>
-</ul>
-</li>
-<li>PyCharm profile basic configuration</li>
-</ul>
-<h2 id="how-to-use-this-repository-template-to-create-a-new-package">How to use this repository template to create a new package</h2>
-<ul>
-<li>Create your github repository using this template. (The big green <code>Use this template</code> button)</li>
-<li>Rename the <code>cloudevents_pydantic</code> directory</li>
-<li>Search and replace all the occurrences of <code>cloudevents-pydantic</code> and <code>cloudevents_pydantic</code></li>
-<li>Configure a pending trusted publisher on <a href="https://pypi.org/manage/account/publishing">pypi</a> using the following values:<ul>
-<li>PyPI Project Name: The github repository name (in this case <code>cloudevents-pydantic</code>)</li>
-<li>Owner: The github repository owner (in this case <code>febus982</code>)</li>
-<li>Repository name: The github repository name (in this case <code>cloudevents-pydantic</code>)</li>
-<li>Workflow name: <code>release.yml</code></li>
-</ul>
-</li>
-<li>Create a GitHub Actions secret named <code>CODECLIMATE_REPORTER_ID</code> (at URL <code>https://github.com/GITHUB_NAME_OR_ORGANIZATION/GITHUB_REPOSITORY/settings/secrets/actions</code>)
-  containing the codeclimate reporter id (you can find it at <code>https://codeclimate.com/repos/YOUR_REPO_ID/settings/test_reporter</code>).
-  If you don't want to use CodeClimate just delete <code>workflows/python-quality.yml</code>.</li>
-<li>Update the badges in <code>README.md</code>! (check <a href="https://shields.io/">shields.io</a> for extra badges)</li>
-<li>Update the PyCharm Copyright profile in the IDE settings: Editor | Copyright | Copyright Profiles (if you want to use it)</li>
-<li>Setup local development:<ul>
-<li>Clone the repository</li>
-<li>Install poetry <code>pip install poetry</code></li>
-<li>Install dev dependencies with <code>make dev-dependencies</code></li>
-<li>(optional) It is strongly recommended to install <a href="https://pre-commit.com/#installation">pre-commit</a>
-  and run <code>pre-commit install</code> so that formatting and linting are automatically executed during <code>git commit</code>.</li>
-</ul>
-</li>
-<li>Setup GitHub pages (this need local development setup):<ul>
-<li>Initialise documentation branch <code>poetry run mike deploy dev latest --update-aliases --push</code></li>
-<li>Configure GitHub Pages to deploy from the <code>gh-pages</code> branch (at URL <code>https://github.com/GITHUB_NAME_OR_ORGANIZATION/GITHUB_REPOSITORY/settings/pages</code>)</li>
-<li>Add the <code>main</code> branch and the <code>v*.*.*</code> tag rules to the "deployment branches and tags" list in the <code>gh-pages</code> environment (at URL <code>https://github.com/GITHUB_NAME_OR_ORGANIZATION/GITHUB_REPOSITORY/settings/environments</code>)</li>
-</ul>
-</li>
-</ul>
-<p><strong>IMPORTANT:</strong> The repository is configured to deploy on the <a href="https://test.pypi.org/">test PyPI repository</a>.
-It's strongly recommended to create the project in the <a href="https://test.pypi.org/">test PyPI repository</a> and test
-the deployment pipeline. When you're happy with the result, create the project on the official <a href="https://pypi.org/">PyPI repository</a>
-and remove the marked lines in <code>workflows/release.yml</code>.</p>
-<h2 id="package-release">Package release</h2>
-<p>This setup uses <a href="https://github.com/mtkennerly/poetry-dynamic-versioning">poetry-dynamic-versioning</a>.
-This means it's not necessary to commit the version in the code but the CI pipeline
-will infer it from the git tag.</p>
-<p>To release a new version, just create a new release and tag in the GitHub repository, to:</p>
-<ul>
-<li>Build and deploy the python package to PyPI</li>
-<li>Build and deploy a new version of the documentation to GitHub pages</li>
-</ul>
-<p><strong>IMPORTANT:</strong> The default configuration requires the release name and the tag to follow
-the convention <code>vX.X.X</code> (semantic versioning preceded by lowercase <code>v</code>). It will publish
-the correct version on Pypi, omitting the <code>v</code> (ie. <code>v1.0.0</code> will publish <code>1.0.0</code>).</p>
-<p>This format can be customized, refer to <a href="https://github.com/mtkennerly/poetry-dynamic-versioning">poetry-dynamic-versioning docs</a></p>
+<p>This is an implementation of the <a href="https://github.com/cloudevents/spec/tree/main">CloudEvents spec</a> using
+<a href="https://docs.pydantic.dev/latest/">Pydantic V2</a> for high performance during validation and serialization.</p>
+<p>Currently supported bindings:</p>
+<table>
+<thead>
+<tr>
+<th>Binding</th>
+<th style="text-align: left;">Format</th>
+<th style="text-align: center;">Single</th>
+<th style="text-align: center;">Batch</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HTTP</td>
+<td style="text-align: left;">JSON</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+</tr>
+<tr>
+<td>HTTP</td>
+<td style="text-align: left;">Binary</td>
+<td style="text-align: center;">planned</td>
+<td style="text-align: center;">planned</td>
+</tr>
+<tr>
+<td>KAFKA</td>
+<td style="text-align: left;">JSON</td>
+<td style="text-align: center;">planned</td>
+<td style="text-align: center;">planned</td>
+</tr>
+<tr>
+<td>KAFKA</td>
+<td style="text-align: left;">Binary</td>
+<td style="text-align: center;">planned</td>
+<td style="text-align: center;">planned</td>
+</tr>
+</tbody>
+</table>
+<h2 id="how-to-use">How to use</h2>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>cloudevents-pydantic
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">cloudevents_pydantic.bindings.http</span> <span class="kn">import</span> <span class="n">HTTPHandler</span>
+<span class="kn">from</span> <span class="nn">cloudevents_pydantic.events</span> <span class="kn">import</span> <span class="n">CloudEvent</span>
+
+<span class="n">handler</span> <span class="o">=</span> <span class="n">HTTPHandler</span><span class="p">()</span>
+<span class="n">minimal_attributes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;com.example.string&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/event-producer&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># `CloudEvent` is a Pydantic model to handle validation and serialization</span>
+<span class="c1"># `event_factory` is a helper method to autogenerate some of the mandatory </span>
+<span class="c1"># such as id, time, specversion</span>
+<span class="n">event</span> <span class="o">=</span> <span class="n">CloudEvent</span><span class="o">.</span><span class="n">event_factory</span><span class="p">(</span><span class="o">**</span><span class="n">minimal_attributes</span><span class="p">)</span>
+
+<span class="c1"># Single event HTTP serialization</span>
+<span class="n">headers</span><span class="p">,</span> <span class="n">single_event_as_json</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+<span class="c1"># Batch of events HTTP serialization</span>
+<span class="n">headers</span><span class="p">,</span> <span class="n">batch_of_events_as_json</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">to_json_batch</span><span class="p">([</span><span class="n">event</span><span class="p">])</span>
+
+<span class="c1"># Parsing a JSON string for a single event</span>
+<span class="n">parsed_event</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">single_event_as_json</span><span class="p">)</span>
+
+<span class="c1"># Parsing a JSON string for a single event</span>
+<span class="n">parsed_event_list</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">batch_of_events_as_json</span><span class="p">)</span>
+</code></pre></div>
+<p>Refer to the <a href="https://febus982.github.io/cloudevents-pydantic/">docs</a> for more advanced use cases and
+for details on how to create custom events.</p>
+<h2 id="performance">Performance</h2>
+<p>Using pydantic gives a great performance boost if compared to the official SDK. (there's obviously
+some performance issue in the official serialization using pydantic)</p>
+<p>These results come from a Macbook Pro M3 Max on python 3.12. Feel free to run the <code>benchmark.py</code>
+script yourself.</p>
+<div class="highlight"><pre><span></span><code>Timings<span class="w"> </span><span class="k">for</span><span class="w"> </span>HTTP<span class="w"> </span>JSON<span class="w"> </span>deserialization:
+This<span class="w"> </span>package:<span class="w"> </span><span class="m">2</span>.5353065830422565
+Official<span class="w"> </span>SDK<span class="w"> </span>with<span class="w"> </span>pydantic<span class="w"> </span>model:<span class="w"> </span><span class="m">12</span>.80780174996471
+Official<span class="w"> </span>SDK<span class="w"> </span>with<span class="w"> </span>http<span class="w"> </span>model:<span class="w"> </span><span class="m">11</span>.474249749968294
+
+Timings<span class="w"> </span><span class="k">for</span><span class="w"> </span>HTTP<span class="w"> </span>JSON<span class="w"> </span>serialization:
+This<span class="w"> </span>package:<span class="w"> </span><span class="m">3</span>.4850796660175547
+Official<span class="w"> </span>SDK<span class="w"> </span>with<span class="w"> </span>pydantic<span class="w"> </span>model:<span class="w"> </span><span class="m">39</span>.037468083028216
+Official<span class="w"> </span>SDK<span class="w"> </span>with<span class="w"> </span>http<span class="w"> </span>model:<span class="w"> </span><span class="m">7</span>.681282749981619
+</code></pre></div>
 <h2 id="commands-for-development">Commands for development</h2>
 <p>All the common commands used during development can be run using make targets:</p>
 <ul>
@@ -1184,7 +735,7 @@ the correct version on Pypi, omitting the <code>v</code> (ie. <code>v1.0.0</code
     <script id="__config" type="application/json">{"base": ".", "features": ["navigation.expand", "navigation.top", "content.code.copy"], "search": "assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "stable", "provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.56dfad97.min.js"></script>
+      <script src="assets/javascripts/bundle.d6f25eb3.min.js"></script>
       
     
   </body>

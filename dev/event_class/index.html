@@ -29,29 +29,29 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="A manager to easily handle multiple SQLAlchemy configurations">
+        <meta name="description" content="An implementation of the CloudEvents spec using pydantic">
       
       
         <meta name="author" content="Federico Busetti">
       
       
       
-        <link rel="prev" href="..">
+        <link rel="prev" href="../architecture/">
       
       
-        <link rel="next" href="bindings/">
+        <link rel="next" href="../protocol_bindings/http_binding/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.36">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.38">
     
     
       
-        <title>Index - Bootstrap python package</title>
+        <title>Event class - Cloudevents pydantic</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.06209087.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.8c3ca2c6.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
@@ -72,8 +72,6 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-    
-      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -101,7 +99,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#cloudevents_pydantic" class="md-skip">
+        <a href="#event-class" class="md-skip">
           Skip to content
         </a>
       
@@ -133,7 +131,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="Bootstrap python package" class="md-header__button md-logo" aria-label="Bootstrap python package" data-md-component="logo">
+    <a href=".." title="Cloudevents pydantic" class="md-header__button md-logo" aria-label="Cloudevents pydantic" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -147,13 +145,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Bootstrap python package
+            Cloudevents pydantic
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Index
+              Event class
             
           </span>
         </div>
@@ -276,13 +274,13 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="Bootstrap python package" class="md-nav__button md-logo" aria-label="Bootstrap python package" data-md-component="logo">
+    <a href=".." title="Cloudevents pydantic" class="md-nav__button md-logo" aria-label="Cloudevents pydantic" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    Bootstrap python package
+    Cloudevents pydantic
   </label>
   
     <div class="md-nav__source">
@@ -323,41 +321,24 @@
       
   
   
-    
   
   
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
-            
   
   <span class="md-ellipsis">
-    API Reference
+    Architecture
   </span>
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
-            API Reference
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
+      </a>
+    </li>
+  
+
+    
+      
+      
   
   
     
@@ -369,12 +350,14 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
           
   
   <span class="md-ellipsis">
-    Index
+    Event class
   </span>
   
 
@@ -385,7 +368,7 @@
         
   
   <span class="md-ellipsis">
-    Index
+    Event class
   </span>
   
 
@@ -397,6 +380,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -405,9 +390,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#cloudevents_pydantic" class="md-nav__link">
+  <a href="#the-cloudevent-class-and-the-pydantic-typeadapter" class="md-nav__link">
     <span class="md-ellipsis">
-      cloudevents_pydantic
+      The CloudEvent class and the pydantic TypeAdapter
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-your-own-event-subclasses-in-the-right-way" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create your own event subclasses in the right way
     </span>
   </a>
   
@@ -420,428 +414,6 @@
     </li>
   
 
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Bindings
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_2">
-            <span class="md-nav__icon md-icon"></span>
-            Bindings
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="bindings/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Index
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="bindings/http/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Http
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Events
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_3">
-            <span class="md-nav__icon md-icon"></span>
-            Events
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="events/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Index
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="events/_event/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-     event
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_3_3" id="__nav_2_3_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Extensions
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_3_3">
-            <span class="md-nav__icon md-icon"></span>
-            Extensions
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="events/extensions/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Index
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_3_4" id="__nav_2_3_4_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Field types
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_3_4">
-            <span class="md-nav__icon md-icon"></span>
-            Field types
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="events/field_types/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Index
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="events/field_types/_canonic_types/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-     canonic types
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Formats
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_4">
-            <span class="md-nav__icon md-icon"></span>
-            Formats
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="formats/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Index
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="formats/json/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Json
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
     
       
       
@@ -859,24 +431,24 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
             
   
   <span class="md-ellipsis">
-    ADR
+    Protocol bindings
   </span>
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
-            ADR
+            Protocol bindings
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -887,40 +459,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../adr/summary/" class="md-nav__link">
+      <a href="../protocol_bindings/http_binding/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Summary
+    HTTP binding
   </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../adr/0001-record-architecture-decisions/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Use Markdown Any Decision Records V3
-  </span>
-  
-    
-  
-  
-    <span class="md-status md-status--accepted"></span>
-  
-
   
 
       </a>
@@ -953,6 +497,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -961,9 +507,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#cloudevents_pydantic" class="md-nav__link">
+  <a href="#the-cloudevent-class-and-the-pydantic-typeadapter" class="md-nav__link">
     <span class="md-ellipsis">
-      cloudevents_pydantic
+      The CloudEvent class and the pydantic TypeAdapter
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-your-own-event-subclasses-in-the-right-way" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create your own event subclasses in the right way
     </span>
   </a>
   
@@ -987,33 +542,118 @@
   
 
 
-  <h1>Index</h1>
+<h1 id="event-class">Event class</h1>
+<h2 id="the-cloudevent-class-and-the-pydantic-typeadapter">The CloudEvent class and the pydantic TypeAdapter</h2>
+<p>The <code>CloudEvent</code> class is the core of the system using a Pydantic model.
+It is responsible for all the validation and serialization of the canonic
+types.</p>
+<p>The class has some basic support for <code>data</code> which has the <code>Any</code> type.
+Pydantic will use a best effort approach for the serialization process
+and <em>no validation</em>.</p>
+<p>You will usually use the <code>CloudEvent</code> class (or a subclass) it when\
+creating an event from your application domain logic.</p>
+<div class="admonition tip">
+<p class="admonition-title">Use subclasses</p>
+<p>It is recommended to create subclasses with your specific data types
+so you can better control the serialization rules.</p>
+</div>
+<p>You can create an event in different ways:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Factory method (recommended)</label><label for="__tabbed_1_2">Class constructor</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>The class provides a nice factory method that takes care of providing
+some default values for required fields.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">cloudevents_pydantic.events</span> <span class="kn">import</span> <span class="n">CloudEvent</span>
 
-<div class="doc doc-object doc-module">
+<span class="c1"># `source` and `type` are the minimal needed attributes when using the factory</span>
+<span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;order:service&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;order.created&quot;</span><span class="p">,</span>
+<span class="p">}</span>
 
+<span class="n">my_event</span> <span class="o">=</span> <span class="n">CloudEvent</span><span class="o">.</span><span class="n">event_factory</span><span class="p">(</span><span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+</code></pre></div>
+<p>The provided defaults are:</p>
+<ul>
+<li><code>id</code>: Uses ULID (a sortable version of UUID)</li>
+<li><code>time</code>: Simple <code>datetime.now()</code> in UTC timezone</li>
+<li><code>specversion</code>: Hardcoded <code>1.0</code> (the only supported version for now)</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Default values and the factory</p>
+<p>We don't define defaults in the <code>CloudEvent</code> class for the mandatory fields.
+In this way we can validate their presence when we receive an event from an
+external source.</p>
+<p>Do not override the model fields defaults when subclassing the <code>CloudEvent</code> class.
+Override the <code>event_factory</code> as needed.</p>
+</div>
+</div>
+<div class="tabbed-block">
+<p>Use the constructor from the model</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">cloudevents_pydantic.events</span> <span class="kn">import</span> <span class="n">CloudEvent</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
 
+<span class="c1"># Full set of attributes</span>
+<span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;data-key&quot;</span><span class="p">:</span> <span class="s2">&quot;val&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;datacontenttype&quot;</span><span class="p">:</span> <span class="s2">&quot;application/octet-stream&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dataschema&quot;</span><span class="p">:</span> <span class="s2">&quot;http://some-dataschema.url&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;id-can-be-anything&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;dummy:source&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;specversion&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="s2">&quot;some-subject&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span>
+            <span class="n">year</span><span class="o">=</span><span class="mi">2020</span><span class="p">,</span>
+            <span class="n">month</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+            <span class="n">day</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+            <span class="n">hour</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+            <span class="n">minute</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">second</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+            <span class="n">microsecond</span><span class="o">=</span><span class="mi">519216</span><span class="p">,</span>
+            <span class="n">tzinfo</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">4</span><span class="p">)),</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;dummy.type&quot;</span><span class="p">,</span>
+<span class="p">}</span>
 
-<a id="cloudevents_pydantic"></a>
-    <div class="doc doc-contents first">
+<span class="n">my_event</span> <span class="o">=</span> <span class="n">CloudEvent</span><span class="p">(</span><span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Default values and the factory</p>
+<p>You can use either <code>str</code> values or python objects (see the <code>time</code> field)</p>
+</div>
+</div>
+</div>
+</div>
+<h2 id="create-your-own-event-subclasses-in-the-right-way">Create your own event subclasses in the right way</h2>
+<p>When you create event types in your app you will want to make sure to follow these best practices:</p>
+<ul>
+<li>Use <code>TypedDict</code> for structured data instead of nested pydantic models (as specified in
+  <a href="https://docs.pydantic.dev/latest/concepts/performance/#use-typeddict-over-nested-models">Pydantic performance</a>
+  documentatin)</li>
+<li>Use the fields types defined in the <code>cloudevents_pydantic.events.field_types</code>. These types will
+  be kept up to date and make sure their validation, serialization and deserialization rules
+  will be compliant with the <a href="https://github.com/cloudevents/spec/tree/main">CloudEvents spec</a>.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">TypedDict</span><span class="p">,</span> <span class="n">Literal</span>
+<span class="kn">from</span> <span class="nn">cloudevents_pydantic.events</span> <span class="kn">import</span> <span class="n">CloudEvent</span><span class="p">,</span> <span class="n">field_types</span>
 
+<span class="k">class</span> <span class="nc">OrderCreatedData</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">a_str</span><span class="p">:</span> <span class="n">field_types</span><span class="o">.</span><span class="n">String</span>
+    <span class="n">an_int</span><span class="p">:</span> <span class="n">field_types</span><span class="o">.</span><span class="n">Integer</span>
 
+<span class="k">class</span> <span class="nc">OrderCreated</span><span class="p">(</span><span class="n">CloudEvent</span><span class="p">):</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">OrderCreatedData</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;order_created&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;order_created&quot;</span>
+    <span class="n">source</span><span class="p">:</span> <span class="n">field_types</span><span class="o">.</span><span class="n">String</span> <span class="o">=</span> <span class="s2">&quot;order_service&quot;</span>
 
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
+<span class="n">event</span> <span class="o">=</span> <span class="n">OrderCreated</span><span class="o">.</span><span class="n">event_factory</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;a_str&quot;</span><span class="p">:</span> <span class="s2">&quot;a nice string&quot;</span><span class="p">,</span> <span class="s2">&quot;an_int&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Use subclasses</p>
+<p>Be careful when overriding attributes for the <code>CloudEvent</code> fields, except for <code>data</code>,
+you'll probably only need to override <code>type</code> and <code>source</code>.</p>
 </div>
 
 
@@ -1085,7 +725,7 @@
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.expand", "navigation.top", "content.code.copy"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "stable", "provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.56dfad97.min.js"></script>
+      <script src="../assets/javascripts/bundle.d6f25eb3.min.js"></script>
       
     
   </body>
