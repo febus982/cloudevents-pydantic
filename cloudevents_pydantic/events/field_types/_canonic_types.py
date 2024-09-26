@@ -84,17 +84,44 @@ str_constraint = (
 
 # TODO: Add types docstrings
 Boolean = Annotated[bool, PlainSerializer(bool_serializer)]
+"""
+A boolean value of "true" or "false"
+"""
+
 Integer = Annotated[int, Ge(-2147483648), Le(2147483648)]
+"""
+A whole number in the range -2,147,483,648 to +2,147,483,647 inclusive
+"""
+
 String = Annotated[str, StringConstraints(pattern=str_constraint)]
+"""
+Sequence of allowable Unicode characters
+"""
+
 # bytearray is coerced to bytes, memoryview is not supported
 Binary = Annotated[bytes, PlainSerializer(binary_serializer)]
+"""
+Sequence of bytes supporting base64 serialization/deserialization
+"""
+
 URI = Annotated[
     ParseResult, PlainValidator(absolute_uri_validator), PlainSerializer(url_serializer)
 ]
+"""
+Absolute uniform resource identifier
+"""
+
 URIReference = Annotated[
     ParseResult, PlainValidator(generic_uri_validator), PlainSerializer(url_serializer)
 ]
+"""
+Uniform resource identifier reference
+"""
+
 DateTime = datetime
+"""
+Date and time expression using the Gregorian Calendar
+"""
 
 
 class SpecVersion(str, Enum):
@@ -109,6 +136,3 @@ class SpecVersion(str, Enum):
 
     # v0_3 = "0.3"
     v1_0 = "1.0"
-
-
-DEFAULT_SPECVERSION = SpecVersion.v1_0

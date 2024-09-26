@@ -23,6 +23,7 @@
 import base64
 import datetime
 import typing
+from typing import Union
 
 from cloudevents.pydantic.fields_docs import FIELD_DESCRIPTIONS
 from pydantic import (
@@ -36,7 +37,8 @@ from pydantic_core.core_schema import ValidationInfo
 from ulid import ULID
 
 from .field_types import URI, DateTime, SpecVersion, String, URIReference
-from .field_types._canonic_types import DEFAULT_SPECVERSION
+
+DEFAULT_SPECVERSION = SpecVersion.v1_0
 
 
 class CloudEvent(BaseModel):  # type: ignore
@@ -49,9 +51,22 @@ class CloudEvent(BaseModel):  # type: ignore
         cls,
         id: typing.Optional[str] = None,
         specversion: typing.Optional[SpecVersion] = None,
-        time: typing.Optional[datetime.datetime] = None,
+        time: typing.Optional[Union[datetime.datetime, str]] = None,
         **kwargs,
     ) -> "CloudEvent":
+        """
+        Builds a new CloudEvent using sensible defaults.
+
+        :param id: The event id, defaults to a ULID
+        :type id: typing.Optional[str]
+        :param specversion: The specversion of the event, defaults to 1.0
+        :type specversion: typing.Optional[SpecVersion]
+        :param time: The time the event occurred, defaults to now
+        :type time: typing.Optional[Union[datetime.datetime, str]]
+        :param kwargs: Other kwargs forwarded directly to the CloudEvent model.
+        :return: A new CloudEvent model
+        :rtype: CloudEvent
+        """
         return cls(
             id=id or str(ULID()),
             specversion=specversion or DEFAULT_SPECVERSION,
