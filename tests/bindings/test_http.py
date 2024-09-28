@@ -21,7 +21,7 @@
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
 from typing import List
-from unittest.mock import patch
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 from pydantic import Field, TypeAdapter
@@ -97,16 +97,24 @@ def from_json_batch_spy():
         yield mocked_function
 
 
-def test_initialization_defaults_to_cloudevents(type_adapter_init_mock):
-    handler = HTTPHandler()
-    assert handler.event_class is CloudEvent
-    type_adapter_init_mock.assert_called_once_with(List[CloudEvent])
+def test_initialization_defaults_to_cloudevents(type_adapter_init_mock: MagicMock):
+    HTTPHandler()
+    type_adapter_init_mock.assert_has_calls(
+        [
+            call(CloudEvent),
+            call(List[CloudEvent]),
+        ]
+    )
 
 
-def test_initialization_uses_provided_event_class(type_adapter_init_mock):
-    handler = HTTPHandler(event_class=SomeEvent)
-    assert handler.event_class is SomeEvent
-    type_adapter_init_mock.assert_called_once_with(List[SomeEvent])
+def test_initialization_uses_provided_event_class(type_adapter_init_mock: MagicMock):
+    HTTPHandler(event_class=SomeEvent)
+    type_adapter_init_mock.assert_has_calls(
+        [
+            call(SomeEvent),
+            call(List[SomeEvent]),
+        ]
+    )
 
 
 @pytest.mark.parametrize(
@@ -143,7 +151,7 @@ def test_from_json(from_json_spy):
     handler = HTTPHandler(event_class=SomeEvent)
     event = handler.from_json(valid_json)
 
-    from_json_spy.assert_called_once_with(valid_json, handler.event_class)
+    from_json_spy.assert_called_once_with(valid_json, handler.event_adapter)
     assert event == SomeEvent(**test_attributes)
     assert event != CloudEvent(**test_attributes)
     assert isinstance(event, SomeEvent)

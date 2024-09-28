@@ -26,16 +26,16 @@ from typing import (
     List,
     NamedTuple,
     Type,
+    TypeVar,
     cast,
 )
 
 from pydantic import TypeAdapter
-from typing_extensions import TypeVar
 
 from cloudevents_pydantic.events import CloudEvent
 from cloudevents_pydantic.formats import json
 
-_T = TypeVar("_T", bound=CloudEvent, default=CloudEvent)
+_T = TypeVar("_T", bound=CloudEvent)
 
 
 class HTTPComponents(NamedTuple):
@@ -44,12 +44,12 @@ class HTTPComponents(NamedTuple):
 
 
 class HTTPHandler(Generic[_T]):
-    event_class: Type[_T]
+    event_adapter: TypeAdapter[_T]
     batch_adapter: TypeAdapter[List[_T]]
 
     def __init__(self, event_class: Type[_T] = cast(Type[_T], CloudEvent)) -> None:
         super().__init__()
-        self.event_class = event_class
+        self.event_adapter = TypeAdapter(event_class)
         self.batch_adapter = TypeAdapter(List[event_class])  # type: ignore[valid-type]
 
     def to_json(self, event: _T) -> HTTPComponents:
@@ -90,7 +90,7 @@ class HTTPHandler(Generic[_T]):
         :return: The deserialized event
         :rtype: CloudEvent
         """
-        return json.from_json(body, self.event_class)
+        return json.from_json(body, self.event_adapter)
 
     def from_json_batch(
         self,

@@ -20,14 +20,13 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
-from typing import List, Type, overload
+from typing import List, TypeVar
 
 from pydantic import TypeAdapter
-from typing_extensions import TypeVar
 
 from ..events import CloudEvent
 
-_T = TypeVar("_T", bound=CloudEvent, default=CloudEvent)
+_T = TypeVar("_T", bound=CloudEvent)
 
 
 def to_json(event: CloudEvent) -> str:
@@ -42,22 +41,20 @@ def to_json(event: CloudEvent) -> str:
     return event.model_dump_json()
 
 
-@overload
-def from_json(data: str) -> CloudEvent: ...
-@overload
-def from_json(data: str, event_class: Type[_T]) -> _T: ...
-def from_json(data: str, event_class: Type[CloudEvent] = CloudEvent) -> CloudEvent:
+def from_json(
+    data: str, event_adapter: TypeAdapter[_T] = TypeAdapter(CloudEvent)
+) -> _T:
     """
     Deserializes an event from JSON format.
 
     :param data: the JSON representation of the event
     :type data: str
-    :param event_class: The event class to build
-    :type event_class: Type[CloudEvent]
+    :param event_adapter: The event class to build
+    :type event_adapter: Type[CloudEvent]
     :return: The deserialized event
     :rtype: CloudEvent
     """
-    return event_class.model_validate_json(data)
+    return event_adapter.validate_json(data)
 
 
 def to_json_batch(

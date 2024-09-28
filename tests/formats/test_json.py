@@ -375,7 +375,7 @@ def test_from_json_base64_with_binary_type(
             batch_adapter=TypeAdapter(Sequence[BinaryDataEvent]),
         )[0]
     else:
-        event = from_json(json_string, BinaryDataEvent)
+        event = from_json(json_string, TypeAdapter(BinaryDataEvent))
     assert event.data == expected_value
     assert isinstance(event, BinaryDataEvent)
 
@@ -412,5 +412,5 @@ def test_nested_binary_fields_correctly_deserialized():
     class BinaryNestedEvent(CloudEvent):
         data: SomeData
 
-    event: BinaryNestedEvent = from_json(json_input, BinaryNestedEvent)
+    event: BinaryNestedEvent = from_json(json_input, TypeAdapter(BinaryNestedEvent))
     assert event.data["data"] == b"\x02\x03\x05\x07"
