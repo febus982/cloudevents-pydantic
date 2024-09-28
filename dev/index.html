@@ -644,15 +644,15 @@ for details on how to create custom events.</p>
 some performance issue in the official serialization using pydantic)</p>
 <p>These results come from a Macbook Pro M3 Max on python 3.12. Feel free to run the <code>benchmark.py</code>
 script yourself.</p>
-<div class="highlight"><pre><span></span><code>Timings<span class="w"> </span><span class="k">for</span><span class="w"> </span>HTTP<span class="w"> </span>JSON<span class="w"> </span>deserialization:
-This<span class="w"> </span>package:<span class="w"> </span><span class="m">2</span>.5353065830422565
-Official<span class="w"> </span>SDK<span class="w"> </span>with<span class="w"> </span>pydantic<span class="w"> </span>model:<span class="w"> </span><span class="m">12</span>.80780174996471
-Official<span class="w"> </span>SDK<span class="w"> </span>with<span class="w"> </span>http<span class="w"> </span>model:<span class="w"> </span><span class="m">11</span>.474249749968294
+<div class="highlight"><pre><span></span><code>Timings for HTTP JSON deserialization:
+This package: 3.0855846670019673
+Official SDK with pydantic model: 15.35431600001175
+Official SDK with http model: 13.728038166998886
 
-Timings<span class="w"> </span><span class="k">for</span><span class="w"> </span>HTTP<span class="w"> </span>JSON<span class="w"> </span>serialization:
-This<span class="w"> </span>package:<span class="w"> </span><span class="m">3</span>.4850796660175547
-Official<span class="w"> </span>SDK<span class="w"> </span>with<span class="w"> </span>pydantic<span class="w"> </span>model:<span class="w"> </span><span class="m">39</span>.037468083028216
-Official<span class="w"> </span>SDK<span class="w"> </span>with<span class="w"> </span>http<span class="w"> </span>model:<span class="w"> </span><span class="m">7</span>.681282749981619
+Timings for HTTP JSON serialization:
+This package: 4.292417042001034
+Official SDK with pydantic model: 44.50933354199515
+Official SDK with http model: 8.929204874992138
 </code></pre></div>
 <h2 id="commands-for-development">Commands for development</h2>
 <p>All the common commands used during development can be run using make targets:</p>
