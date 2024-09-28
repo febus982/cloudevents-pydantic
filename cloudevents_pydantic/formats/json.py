@@ -20,10 +20,10 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
-from typing import List, Type
+from typing import List, Type, overload
 
 from pydantic import TypeAdapter
-from typing_extensions import TypeVar, overload
+from typing_extensions import TypeVar
 
 from ..events import CloudEvent
 

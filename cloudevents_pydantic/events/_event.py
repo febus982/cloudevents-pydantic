@@ -22,8 +22,7 @@
 # ==============================================================================
 import base64
 import datetime
-import typing
-from typing import Union
+from typing import Any, Dict, Optional, Union
 
 from cloudevents.pydantic.fields_docs import FIELD_DESCRIPTIONS
 from pydantic import (
@@ -33,12 +32,16 @@ from pydantic import (
     model_serializer,
     model_validator,
 )
+from pydantic.fields import FieldInfo
 from pydantic_core.core_schema import ValidationInfo
 from ulid import ULID
 
-from .field_types import URI, DateTime, SpecVersion, String, URIReference
+from .field_types import URI, Binary, DateTime, SpecVersion, String, URIReference
 
 DEFAULT_SPECVERSION = SpecVersion.v1_0
+
+
+_binary_field_metadata = FieldInfo.from_annotation(Binary).metadata
 
 
 class CloudEvent(BaseModel):  # type: ignore
@@ -49,9 +52,9 @@ class CloudEvent(BaseModel):  # type: ignore
     @classmethod
     def event_factory(
         cls,
-        id: typing.Optional[str] = None,
-        specversion: typing.Optional[SpecVersion] = None,
-        time: typing.Optional[Union[datetime.datetime, str]] = None,
+        id: Optional[str] = None,
+        specversion: Optional[SpecVersion] = None,
+        time: Optional[Union[datetime.datetime, str]] = None,
         **kwargs,
     ) -> "CloudEvent":
         """
@@ -74,7 +77,7 @@ class CloudEvent(BaseModel):  # type: ignore
             **kwargs,
         )
 
-    data: typing.Optional[typing.Any] = Field(
+    data: Any = Field(
         title=FIELD_DESCRIPTIONS["data"].get("title"),
         description=FIELD_DESCRIPTIONS["data"].get("description"),
         examples=[FIELD_DESCRIPTIONS["data"].get("example")],
@@ -104,25 +107,25 @@ class CloudEvent(BaseModel):  # type: ignore
     )
 
     # Optional fields
-    time: typing.Optional[DateTime] = Field(
+    time: Optional[DateTime] = Field(
         title=FIELD_DESCRIPTIONS["time"].get("title"),
         description=FIELD_DESCRIPTIONS["time"].get("description"),
         examples=[FIELD_DESCRIPTIONS["time"].get("example")],
         default=None,
     )
-    subject: typing.Optional[String] = Field(
+    subject: Optional[String] = Field(
         title=FIELD_DESCRIPTIONS["subject"].get("title"),
         description=FIELD_DESCRIPTIONS["subject"].get("description"),
         examples=[FIELD_DESCRIPTIONS["subject"].get("example")],
         default=None,
     )
-    datacontenttype: typing.Optional[String] = Field(
+    datacontenttype: Optional[String] = Field(
         title=FIELD_DESCRIPTIONS["datacontenttype"].get("title"),
         description=FIELD_DESCRIPTIONS["datacontenttype"].get("description"),
         examples=[FIELD_DESCRIPTIONS["datacontenttype"].get("example")],
         default=None,
     )
-    dataschema: typing.Optional[URI] = Field(
+    dataschema: Optional[URI] = Field(
         title=FIELD_DESCRIPTIONS["dataschema"].get("title"),
         description=FIELD_DESCRIPTIONS["dataschema"].get("description"),
         examples=[FIELD_DESCRIPTIONS["dataschema"].get("example")],
@@ -154,7 +157,7 @@ class CloudEvent(BaseModel):  # type: ignore
     """
 
     @model_serializer(when_used="json")
-    def base64_json_serializer(self) -> typing.Dict[str, typing.Any]:
+    def base64_json_serializer(self) -> Dict[str, Any]:
         """Takes care of handling binary data serialization into `data_base64`
         attribute.
 
@@ -164,20 +167,18 @@ class CloudEvent(BaseModel):  # type: ignore
                  data handled.
         """
         model_dict = self.model_dump()  # type: ignore
-
-        if isinstance(self.data, (bytes, bytearray, memoryview)):
-            model_dict["data_base64"] = (
-                base64.b64encode(self.data)
-                if isinstance(self.data, (bytes, bytearray, memoryview))
-                else self.data
-            )
+        if _binary_field_metadata == self.model_fields["data"].metadata:
+            model_dict["data_base64"] = model_dict["data"]
+            del model_dict["data"]
+        elif isinstance(model_dict["data"], (bytes, bytearray, memoryview)):
+            model_dict["data_base64"] = base64.b64encode(model_dict["data"])
             del model_dict["data"]
 
         return model_dict
 
     @model_validator(mode="before")
     @classmethod
-    def base64_data_parser(cls, data: typing.Any, info: ValidationInfo) -> typing.Any:
+    def base64_json_validator(cls, data: dict, info: ValidationInfo) -> Any:
         """Takes care of handling binary data deserialization from `data_base64`
         attribute.
 

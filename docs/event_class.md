@@ -105,7 +105,7 @@ When you create event types in your app you will want to make sure to follow the
   will be compliant with the [CloudEvents spec](https://github.com/cloudevents/spec/tree/main).
 
 ```python
-from typing_extensions import TypedDict, Literal
+from typing import TypedDict, Literal
 from cloudevents_pydantic.events import CloudEvent, field_types
 
 class OrderCreatedData(TypedDict):

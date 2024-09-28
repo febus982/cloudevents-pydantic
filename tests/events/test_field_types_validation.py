@@ -20,13 +20,16 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
+from typing import Literal, Union
+
 import pytest
 from pydantic import BaseModel, ValidationError
-from typing_extensions import Literal, TypedDict
+from typing_extensions import TypedDict
 
 from cloudevents_pydantic.events import CloudEvent
 from cloudevents_pydantic.events.field_types import (
     URI,
+    Binary,
     Integer,
     String,
     URIReference,
@@ -43,6 +46,43 @@ def test_integer_validation_behaves_as_signed_32bit():
         IntModel(value=-2147483649)
 
     assert IntModel(value=2312534).value == 2312534
+
+
+@pytest.mark.parametrize(
+    ["data", "validated_data"],
+    [
+        pytest.param("dGVzdA==", b"test", id="bytes_base64"),
+        pytest.param(b"test", b"test", id="bytes"),
+        pytest.param("AgMFBw==", b"\x02\x03\x05\x07", id="bytearray_base64"),
+        pytest.param(b"\x02\x03\x05\x07", b"\x02\x03\x05\x07", id="bytearray"),
+    ],
+)
+def test_binary_validation_accepts_strings_and_bytes(
+    data: Union[bytes, str],
+    validated_data: bytes,
+):
+    class BinaryModel(BaseModel):
+        value: Binary
+
+    model = BinaryModel(value=data)
+
+    assert model.value == validated_data
+    assert isinstance(model.value, bytes)
+
+
+@pytest.mark.parametrize(
+    ["data"],
+    [
+        pytest.param(99.99, id="float"),
+        pytest.param("non?-/*base64-string", id="non_base_64_string"),
+    ],
+)
+def test_binary_validation_fails_on_non_strings_and_bytes(data):
+    class BinaryModel(BaseModel):
+        value: Binary
+
+    with pytest.raises(ValidationError):
+        BinaryModel(value=data)
 
 
 def test_strings_allows_valid_unicode_chars():
