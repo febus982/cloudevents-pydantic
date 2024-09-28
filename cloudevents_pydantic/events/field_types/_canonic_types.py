@@ -23,6 +23,7 @@
 import base64
 from datetime import datetime
 from enum import Enum
+from typing import Annotated, Union
 from urllib.parse import ParseResult, urlparse, urlunparse
 
 from annotated_types import Ge, Le
@@ -31,7 +32,6 @@ from pydantic import (
     PlainValidator,
     StringConstraints,
 )
-from typing_extensions import Annotated
 
 
 def bool_serializer(value: bool) -> str:
@@ -40,6 +40,16 @@ def bool_serializer(value: bool) -> str:
 
 def binary_serializer(value: bytes) -> str:
     return base64.b64encode(value).decode()
+
+
+def binary_validator(value: Union[str, bytes, bytearray, memoryview]) -> bytes:
+    if isinstance(value, (bytes, bytearray, memoryview)):
+        return value
+
+    if isinstance(value, str):
+        return base64.b64decode(value, validate=True)
+
+    raise ValueError(f"Unsupported value type: {type(value)} - {value}")
 
 
 def url_serializer(value: ParseResult) -> str:
@@ -98,10 +108,14 @@ String = Annotated[str, StringConstraints(pattern=str_constraint)]
 Sequence of allowable Unicode characters
 """
 
-# bytearray is coerced to bytes, memoryview is not supported
-Binary = Annotated[bytes, PlainSerializer(binary_serializer)]
+Binary = Annotated[
+    bytes,
+    PlainValidator(binary_validator),
+    PlainSerializer(binary_serializer),
+]
 """
-Sequence of bytes supporting base64 serialization/deserialization
+Sequence of bytes that accepts both bytes and base64 encoded strings as input
+and is serialized to a base64 encoded string.
 """
 
 URI = Annotated[

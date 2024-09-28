@@ -20,6 +20,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
+from typing import Union
+
 import pytest
 from pydantic import BaseModel
 
@@ -45,18 +47,47 @@ def test_bool_serialization(input, serialized_output):
 
 
 @pytest.mark.parametrize(
-    ["data", "expected_value"],
+    ["data", "serialized_output"],
     [
-        pytest.param("test", "dGVzdA==", id="string"),
         pytest.param(b"test", "dGVzdA==", id="bytes"),
-        pytest.param(bytearray([2, 3, 5, 7]), "AgMFBw==", id="bytearray"),
+        pytest.param(b"\x02\x03\x05\x07", "AgMFBw==", id="bytearray"),
     ],
 )
-def test_binary_data_is_b64encoded(data, expected_value):
+def test_binary_serialization(
+    data: Union[bytes, str],
+    serialized_output: str,
+):
     class BinaryModel(BaseModel):
         value: Binary
 
-    assert BinaryModel(value=data).model_dump()["value"] == expected_value
+    model = BinaryModel(value=data)
+
+    serialized_value = model.model_dump()["value"]
+
+    assert serialized_value == serialized_output
+    assert isinstance(serialized_value, str)
+
+
+@pytest.mark.parametrize(
+    ["data", "serialized_output"],
+    [
+        pytest.param(b"test", "dGVzdA==", id="bytes"),
+        pytest.param(b"\x02\x03\x05\x07", "AgMFBw==", id="bytearray"),
+    ],
+)
+def test_nested_binary_serialization(
+    data: Union[bytes, str],
+    serialized_output: str,
+):
+    class BinaryModel(BaseModel):
+        value: Binary
+
+    model = BinaryModel(value=data)
+
+    serialized_value = model.model_dump()["value"]
+
+    assert serialized_value == serialized_output
+    assert isinstance(serialized_value, str)
 
 
 @pytest.mark.parametrize(

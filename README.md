@@ -69,17 +69,16 @@ some performance issue in the official serialization using pydantic)
 These results come from a Macbook Pro M3 Max on python 3.12. Feel free to run the `benchmark.py`
 script yourself.
 
-```shell
+```
 Timings for HTTP JSON deserialization:
-This package: 2.5353065830422565
-Official SDK with pydantic model: 12.80780174996471
-Official SDK with http model: 11.474249749968294
+This package: 3.0855846670019673
+Official SDK with pydantic model: 15.35431600001175
+Official SDK with http model: 13.728038166998886
 
 Timings for HTTP JSON serialization:
-This package: 3.4850796660175547
-Official SDK with pydantic model: 39.037468083028216
-Official SDK with http model: 7.681282749981619
-
+This package: 4.292417042001034
+Official SDK with pydantic model: 44.50933354199515
+Official SDK with http model: 8.929204874992138
 ```
 
 

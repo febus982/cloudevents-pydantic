@@ -20,6 +20,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
+import base64
 import json
 from timeit import timeit
 
@@ -36,11 +37,18 @@ from cloudevents.pydantic import (
 from cloudevents.pydantic import (
     from_json as from_json_pydantic,
 )
+from pydantic import Field
 
 from cloudevents_pydantic.bindings.http import HTTPHandler
 from cloudevents_pydantic.events import CloudEvent
+from cloudevents_pydantic.events.field_types import Binary
 
-valid_json = '{"data":null,"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
+valid_json = '{"data_base64":"dGVzdA==","source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
+test_iterations = 1000000
+
+
+class BinaryEvent(CloudEvent):
+    data: Binary = Field(Binary, alias="data_base64")
 
 
 def json_deserialization():
@@ -56,19 +64,19 @@ def json_deserialization_official_sdk_cloudevent():
 
 
 print("Timings for HTTP JSON deserialization:")
-print("This package: " + str(timeit(json_deserialization)))
+print("This package: " + str(timeit(json_deserialization, number=test_iterations)))
 print(
     "Official SDK with pydantic model: "
-    + str(timeit(json_deserialization_official_sdk_pydantic))
+    + str(timeit(json_deserialization_official_sdk_pydantic, number=test_iterations))
 )
 print(
     "Official SDK with http model: "
-    + str(timeit(json_deserialization_official_sdk_cloudevent))
+    + str(timeit(json_deserialization_official_sdk_cloudevent, number=test_iterations))
 )
 
 attributes = json.loads(valid_json)
-data = attributes["data"]
-del attributes["data"]
+data = base64.b64decode(attributes["data_base64"])
+del attributes["data_base64"]
 event = CloudEvent(**attributes, data=data)
 http_handler = HTTPHandler()
 official_pydantic_event = PydanticOfficialCloudEvent.create(
@@ -91,12 +99,12 @@ def json_serialization_official_sdk_cloudevent():
 
 print("")
 print("Timings for HTTP JSON serialization:")
-print("This package: " + str(timeit(json_serialization)))
+print("This package: " + str(timeit(json_serialization, number=test_iterations)))
 print(
     "Official SDK with pydantic model: "
-    + str(timeit(json_serialization_official_sdk_pydantic))
+    + str(timeit(json_serialization_official_sdk_pydantic, number=test_iterations))
 )
 print(
     "Official SDK with http model: "
-    + str(timeit(json_serialization_official_sdk_cloudevent))
+    + str(timeit(json_serialization_official_sdk_cloudevent, number=test_iterations))
 )

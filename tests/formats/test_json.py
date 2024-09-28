@@ -23,12 +23,13 @@
 import datetime
 import json
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any, Dict, Sequence
 from urllib.parse import ParseResult
 
 import pytest
 from jsonschema import validate
 from pydantic import TypeAdapter, ValidationError
+from typing_extensions import TypedDict
 
 from cloudevents_pydantic.events import CloudEvent
 from cloudevents_pydantic.events.field_types import Binary, SpecVersion
@@ -45,7 +46,7 @@ minimal_attributes = {
     "id": "b96267e2-87be-4f7a-b87c-82f64360d954",
     "specversion": "1.0",
 }
-test_attributes = {
+test_attributes: Dict[str, Any] = {
     "type": "com.example.string",
     "source": "https://example.com/event-producer",
     "id": "b96267e2-87be-4f7a-b87c-82f64360d954",
@@ -54,10 +55,6 @@ test_attributes = {
 }
 valid_json = '{"data":null,"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
 valid_json_batch = f"[{valid_json}]"
-
-
-class BinaryDataEvent(CloudEvent):
-    data: Binary
 
 
 with open(
@@ -327,6 +324,9 @@ def test_to_json_base64_with_binary_type(
     b64_expected: bool,
     batch: bool,
 ):
+    class BinaryDataEvent(CloudEvent):
+        data: Binary
+
     input_attrs = test_attributes.copy()
     input_attrs["data"] = data
     event = BinaryDataEvent.event_factory(**input_attrs)
@@ -360,6 +360,9 @@ def test_to_json_base64_with_binary_type(
 def test_from_json_base64_with_binary_type(
     b64_data: str, expected_value: type, batch: bool
 ):
+    class BinaryDataEvent(CloudEvent):
+        data: Binary
+
     json_string = (
         '{"data_base64":"'
         + b64_data
@@ -375,3 +378,39 @@ def test_from_json_base64_with_binary_type(
         event = from_json(json_string, BinaryDataEvent)
     assert event.data == expected_value
     assert isinstance(event, BinaryDataEvent)
+
+
+def test_nested_binary_fields_correctly_serialized():
+    class SomeData(TypedDict):
+        # Using `data` to verify it doesn't become `data_base64` when nested
+        data: Binary
+        test: str
+
+    class BinaryNestedEvent(CloudEvent):
+        data: SomeData
+
+    input_attrs = test_attributes.copy()
+    input_attrs["data"] = {
+        "data": b"\x02\x03\x05\x07",
+        "test": "test",
+    }
+    event = BinaryNestedEvent.event_factory(**input_attrs)
+    assert (
+        to_json(event)
+        == '{"data":{"data":"AgMFBw==","test":"test"},"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
+    )
+
+
+def test_nested_binary_fields_correctly_deserialized():
+    json_input = '{"data":{"data":"AgMFBw==","test":"test"},"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
+
+    class SomeData(TypedDict):
+        # Using `data` to verify it doesn't become `data_base64` when nested
+        data: Binary
+        test: str
+
+    class BinaryNestedEvent(CloudEvent):
+        data: SomeData
+
+    event: BinaryNestedEvent = from_json(json_input, BinaryNestedEvent)
+    assert event.data["data"] == b"\x02\x03\x05\x07"
