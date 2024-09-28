@@ -37,11 +37,98 @@ def do_something():
 /// admonition | Why you have to reuse the same object?
     type: tip
 
-When the HTTPHandler instance is created it creates internally a Pydantic `TypeAdapter`
-for the event class, to handle efficiently event batches. This is an expensive operation.
-Check the [Pydantic documentation](https://docs.pydantic.dev/latest/concepts/performance/#typeadapter-instantiated-once)
-about this.
+When the HTTPHandler instance is created it creates internally instances of Pydantic `TypeAdapter`
+for the event class, to handle efficiently event serialization and discriminated unions. This is
+an expensive operation. Check the [Pydantic documentation](https://docs.pydantic.dev/latest/concepts/performance/#typeadapter-instantiated-once) about this.
 ///
+
+## Deserialize a JSON event
+
+HTTP deserialization parses the body to reconstruct the event.
+
+/// tab | Custom Event class
+```python
+from cloudevents_pydantic.events import CloudEvent
+from cloudevents_pydantic.bindings.http import HTTPHandler
+
+class OrderCreated(CloudEvent):
+    ...
+
+single_event_json = '{"data":null,"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
+batch_event_json = '[{"data":null,"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}]'
+
+http_handler = HTTPHandler(OrderCreated)
+
+# Single event
+event = http_handler.from_json(single_event_json)
+# Batch (list) of events
+batch_of_events = http_handler.from_json_batch(batch_event_json)
+```
+///
+
+/// tab | CloudEvent class
+```python
+from cloudevents_pydantic.events import CloudEvent
+from cloudevents_pydantic.bindings.http import HTTPHandler
+
+minimal_attributes = {
+    "type": "order_created",
+    "source": "https://example.com/event-producer",
+    "id": "b96267e2-87be-4f7a-b87c-82f64360d954",
+    "specversion": "1.0",
+}
+
+http_handler = HTTPHandler()
+event = CloudEvent.event_factory(**minimal_attributes)
+
+# Single event
+event = http_handler.to_json(event)
+# Batch (list) of events
+batch_of_events = http_handler.to_json_batch([event])
+```
+///
+
+/// details | Use discriminated Unions to handle multiple Event classes
+    type: warning
+
+You'll want to use [discriminated unions](https://docs.pydantic.dev/latest/concepts/unions/#discriminated-unions)
+as event class and use a single `HTTPHandler` for multiple Event classes to be more efficient on validation
+and to produce a correct schema. 
+
+```python
+from typing import Annotated, Literal, Union
+
+from pydantic import Field
+from typing_extensions import TypedDict
+
+from cloudevents_pydantic.bindings.http import HTTPHandler
+from cloudevents_pydantic.events import CloudEvent
+
+
+class OrderCreatedEvent(CloudEvent):
+    data: TypedDict("OrderCreatedData", {"order_id": str})
+    type: Literal["order_created"]
+
+
+class CustomerCreatedEvent(CloudEvent):
+    data: TypedDict("CustomerCreatedData", {"customer_id": str})
+    type: Literal["customer_created"]
+
+
+Event = Annotated[
+    Union[OrderCreatedEvent, CustomerCreatedEvent],
+    Field(discriminator="type"),
+]
+
+http_handler = HTTPHandler(Event)
+
+customer_event_json = '{"data":{"customer_id":"123"},"source":"customer_service","id":"123","type":"customer_created","specversion":"1.0","time":null,"subject":null,"datacontenttype":null,"dataschema":null}'
+
+print(type(http_handler.from_json(customer_event_json)))
+# <class '__main__.CustomerCreatedEvent'>
+```
+///
+
 
 ## Serialize a JSON event
 
@@ -91,51 +178,5 @@ event = CloudEvent.event_factory(**minimal_attributes)
 json_string = http_handler.to_json(event)
 # Batch (list) of events
 json_batch_string = http_handler.to_json_batch([event])
-```
-///
-
-## Deserialize a JSON event
-
-HTTP deserialization parses the body to reconstruct the event.
-
-/// tab | Custom Event class
-```python
-from cloudevents_pydantic.events import CloudEvent
-from cloudevents_pydantic.bindings.http import HTTPHandler
-
-class OrderCreated(CloudEvent):
-    ...
-
-single_event_json = '{"data":null,"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
-batch_event_json = '[{"data":null,"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}]'
-
-http_handler = HTTPHandler(OrderCreated)
-
-# Single event
-event = http_handler.from_json(single_event_json)
-# Batch (list) of events
-batch_of_events = http_handler.from_json_batch(batch_event_json)
-```
-///
-
-/// tab | CloudEvent class
-```python
-from cloudevents_pydantic.events import CloudEvent
-from cloudevents_pydantic.bindings.http import HTTPHandler
-
-minimal_attributes = {
-    "type": "order_created",
-    "source": "https://example.com/event-producer",
-    "id": "b96267e2-87be-4f7a-b87c-82f64360d954",
-    "specversion": "1.0",
-}
-
-http_handler = HTTPHandler()
-event = CloudEvent.event_factory(**minimal_attributes)
-
-# Single event
-event = http_handler.to_json(event)
-# Batch (list) of events
-batch_of_events = http_handler.to_json_batch([event])
 ```
 ///

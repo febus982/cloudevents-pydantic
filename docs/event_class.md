@@ -104,6 +104,7 @@ When you create event types in your app you will want to make sure to follow the
   be kept up to date and make sure their validation, serialization and deserialization rules
   will be compliant with the [CloudEvents spec](https://github.com/cloudevents/spec/tree/main).
 
+/// tab | class Syntax
 ```python
 from typing import TypedDict, Literal
 from cloudevents_pydantic.events import CloudEvent, field_types
@@ -121,6 +122,23 @@ event = OrderCreated.event_factory(
     data={"a_str": "a nice string", "an_int": 1},
 )
 ```
+///
+
+/// tab | inline Syntax
+```python
+from typing import TypedDict, Literal
+from cloudevents_pydantic.events import CloudEvent, field_types
+
+class OrderCreated(CloudEvent):
+    data: TypedDict("OrderCreatedData", {"a_str": field_types.String, "an_int": field_types.Integer})
+    type: Literal["order_created"] = "order_created"
+    source: field_types.String = "order_service"
+
+event = OrderCreated.event_factory(
+    data={"a_str": "a nice string", "an_int": 1},
+)
+```
+///
 
 /// admonition | Use subclasses
     type: warning
