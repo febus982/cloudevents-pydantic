@@ -43,7 +43,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.38">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.39">
     
     
       
@@ -399,9 +399,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#create-your-own-event-subclasses-in-the-right-way" class="md-nav__link">
+  <a href="#best-practices-when-creating-your-event-classes" class="md-nav__link">
     <span class="md-ellipsis">
-      Create your own event subclasses in the right way
+      Best practices when creating your event classes
     </span>
   </a>
   
@@ -516,9 +516,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#create-your-own-event-subclasses-in-the-right-way" class="md-nav__link">
+  <a href="#best-practices-when-creating-your-event-classes" class="md-nav__link">
     <span class="md-ellipsis">
-      Create your own event subclasses in the right way
+      Best practices when creating your event classes
     </span>
   </a>
   
@@ -624,31 +624,49 @@ Override the <code>event_factory</code> as needed.</p>
 </div>
 </div>
 </div>
-<h2 id="create-your-own-event-subclasses-in-the-right-way">Create your own event subclasses in the right way</h2>
+<h2 id="best-practices-when-creating-your-event-classes">Best practices when creating your event classes</h2>
 <p>When you create event types in your app you will want to make sure to follow these best practices:</p>
 <ul>
 <li>Use <code>TypedDict</code> for structured data instead of nested pydantic models (as specified in
   <a href="https://docs.pydantic.dev/latest/concepts/performance/#use-typeddict-over-nested-models">Pydantic performance</a>
   documentatin)</li>
-<li>Use the fields types defined in the <code>cloudevents_pydantic.events.field_types</code>. These types will
+<li>Use the fields types defined in the <code>cloudevents_pydantic.events.field.types</code>. These types will
   be kept up to date and make sure their validation, serialization and deserialization rules
   will be compliant with the <a href="https://github.com/cloudevents/spec/tree/main">CloudEvents spec</a>.</li>
+<li>Write your own pydantic <code>Field</code> for data</li>
+<li>Use the fields available in the <code>cloudevents_pydantic.events.field.metadata</code> when overriding
+  the cloudevent fields to inherit CloudEvents field descriptive metadata (i.e. title, description)
+  will be populated in the schema.</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">TypedDict</span><span class="p">,</span> <span class="n">Literal</span>
-<span class="kn">from</span> <span class="nn">cloudevents_pydantic.events</span> <span class="kn">import</span> <span class="n">CloudEvent</span><span class="p">,</span> <span class="n">field_types</span>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">TypedDict</span>
+
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Field</span>
+
+<span class="kn">from</span> <span class="nn">cloudevents_pydantic.events</span> <span class="kn">import</span> <span class="n">CloudEvent</span>
+<span class="kn">from</span> <span class="nn">cloudevents_pydantic.events.fields</span> <span class="kn">import</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">types</span>
+
 
 <span class="k">class</span> <span class="nc">OrderCreatedData</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-    <span class="n">a_str</span><span class="p">:</span> <span class="n">field_types</span><span class="o">.</span><span class="n">String</span>
-    <span class="n">an_int</span><span class="p">:</span> <span class="n">field_types</span><span class="o">.</span><span class="n">Integer</span>
+    <span class="n">a_str</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">String</span>
+    <span class="n">an_int</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">Integer</span>
+
+
+<span class="n">OrderCreatedDataField</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;An order representation&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A nice new order has been created! OMG!&quot;</span><span class="p">,</span>
+    <span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;{&#39;a_str&#39;: &#39;a nice string&#39;, &#39;an_int&#39;: 1}&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
 
 <span class="k">class</span> <span class="nc">OrderCreated</span><span class="p">(</span><span class="n">CloudEvent</span><span class="p">):</span>
-    <span class="n">data</span><span class="p">:</span> <span class="n">OrderCreatedData</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;order_created&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;order_created&quot;</span>
-    <span class="n">source</span><span class="p">:</span> <span class="n">field_types</span><span class="o">.</span><span class="n">String</span> <span class="o">=</span> <span class="s2">&quot;order_service&quot;</span>
-
-<span class="n">event</span> <span class="o">=</span> <span class="n">OrderCreated</span><span class="o">.</span><span class="n">event_factory</span><span class="p">(</span>
-    <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;a_str&quot;</span><span class="p">:</span> <span class="s2">&quot;a nice string&quot;</span><span class="p">,</span> <span class="s2">&quot;an_int&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
-<span class="p">)</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">OrderCreatedData</span><span class="p">,</span> <span class="n">OrderCreatedDataField</span><span class="p">]</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;order_created&quot;</span><span class="p">],</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;order_created&quot;</span><span class="p">),</span> <span class="n">metadata</span><span class="o">.</span><span class="n">FieldType</span>
+    <span class="p">]</span>
+    <span class="n">source</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;order_service&quot;</span><span class="p">],</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;order_service&quot;</span><span class="p">),</span> <span class="n">metadata</span><span class="o">.</span><span class="n">FieldSource</span>
+    <span class="p">]</span>
 </code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Use subclasses</p>
@@ -725,7 +743,7 @@ you'll probably only need to override <code>type</code> and <code>source</code>.
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.expand", "navigation.top", "content.code.copy"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "stable", "provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.d6f25eb3.min.js"></script>
+      <script src="../assets/javascripts/bundle.525ec568.min.js"></script>
       
     
   </body>

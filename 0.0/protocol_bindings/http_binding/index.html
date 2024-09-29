@@ -41,7 +41,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.38">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.39">
     
     
       
@@ -445,18 +445,33 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#serialize-a-json-event" class="md-nav__link">
+  <a href="#deserialize-a-json-event" class="md-nav__link">
     <span class="md-ellipsis">
-      Serialize a JSON event
+      Deserialize a JSON event
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deserialize a JSON event">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fastapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      FastAPI
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#deserialize-a-json-event" class="md-nav__link">
+  <a href="#serialize-a-json-event" class="md-nav__link">
     <span class="md-ellipsis">
-      Deserialize a JSON event
+      Serialize a JSON event
     </span>
   </a>
   
@@ -505,18 +520,33 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#serialize-a-json-event" class="md-nav__link">
+  <a href="#deserialize-a-json-event" class="md-nav__link">
     <span class="md-ellipsis">
-      Serialize a JSON event
+      Deserialize a JSON event
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deserialize a JSON event">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fastapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      FastAPI
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#deserialize-a-json-event" class="md-nav__link">
+  <a href="#serialize-a-json-event" class="md-nav__link">
     <span class="md-ellipsis">
-      Deserialize a JSON event
+      Serialize a JSON event
     </span>
   </a>
   
@@ -574,14 +604,132 @@
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Why you have to reuse the same object?</p>
-<p>When the HTTPHandler instance is created it creates internally a Pydantic <code>TypeAdapter</code>
-for the event class, to handle efficiently event batches. This is an expensive operation.
-Check the <a href="https://docs.pydantic.dev/latest/concepts/performance/#typeadapter-instantiated-once">Pydantic documentation</a>
-about this.</p>
+<p>When the HTTPHandler instance is created it creates internally instances of Pydantic <code>TypeAdapter</code>
+for the event class, to handle efficiently event serialization and discriminated unions. This is
+an expensive operation. Check the <a href="https://docs.pydantic.dev/latest/concepts/performance/#typeadapter-instantiated-once">Pydantic documentation</a> about this.</p>
+</div>
+<h2 id="deserialize-a-json-event">Deserialize a JSON event</h2>
+<p>HTTP deserialization parses the body to reconstruct the event.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Custom Event class</label><label for="__tabbed_2_2">CloudEvent class</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">cloudevents_pydantic.events</span> <span class="kn">import</span> <span class="n">CloudEvent</span>
+<span class="kn">from</span> <span class="nn">cloudevents_pydantic.bindings.http</span> <span class="kn">import</span> <span class="n">HTTPHandler</span>
+
+<span class="k">class</span> <span class="nc">OrderCreated</span><span class="p">(</span><span class="n">CloudEvent</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="n">single_event_json</span> <span class="o">=</span> <span class="s1">&#39;{&quot;data&quot;:null,&quot;source&quot;:&quot;https://example.com/event-producer&quot;,&quot;id&quot;:&quot;b96267e2-87be-4f7a-b87c-82f64360d954&quot;,&quot;type&quot;:&quot;com.example.string&quot;,&quot;specversion&quot;:&quot;1.0&quot;,&quot;time&quot;:&quot;2022-07-16T12:03:20.519216+04:00&quot;,&quot;subject&quot;:null,&quot;datacontenttype&quot;:null,&quot;dataschema&quot;:null}&#39;</span>
+<span class="n">batch_event_json</span> <span class="o">=</span> <span class="s1">&#39;[{&quot;data&quot;:null,&quot;source&quot;:&quot;https://example.com/event-producer&quot;,&quot;id&quot;:&quot;b96267e2-87be-4f7a-b87c-82f64360d954&quot;,&quot;type&quot;:&quot;com.example.string&quot;,&quot;specversion&quot;:&quot;1.0&quot;,&quot;time&quot;:&quot;2022-07-16T12:03:20.519216+04:00&quot;,&quot;subject&quot;:null,&quot;datacontenttype&quot;:null,&quot;dataschema&quot;:null}]&#39;</span>
+
+<span class="n">http_handler</span> <span class="o">=</span> <span class="n">HTTPHandler</span><span class="p">(</span><span class="n">OrderCreated</span><span class="p">)</span>
+
+<span class="c1"># Single event</span>
+<span class="n">event</span> <span class="o">=</span> <span class="n">http_handler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">single_event_json</span><span class="p">)</span>
+<span class="c1"># Batch (list) of events</span>
+<span class="n">batch_of_events</span> <span class="o">=</span> <span class="n">http_handler</span><span class="o">.</span><span class="n">from_json_batch</span><span class="p">(</span><span class="n">batch_event_json</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">cloudevents_pydantic.events</span> <span class="kn">import</span> <span class="n">CloudEvent</span>
+<span class="kn">from</span> <span class="nn">cloudevents_pydantic.bindings.http</span> <span class="kn">import</span> <span class="n">HTTPHandler</span>
+
+<span class="n">minimal_attributes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;order_created&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/event-producer&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;b96267e2-87be-4f7a-b87c-82f64360d954&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;specversion&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">http_handler</span> <span class="o">=</span> <span class="n">HTTPHandler</span><span class="p">()</span>
+<span class="n">event</span> <span class="o">=</span> <span class="n">CloudEvent</span><span class="o">.</span><span class="n">event_factory</span><span class="p">(</span><span class="o">**</span><span class="n">minimal_attributes</span><span class="p">)</span>
+
+<span class="c1"># Single event</span>
+<span class="n">event</span> <span class="o">=</span> <span class="n">http_handler</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+<span class="c1"># Batch (list) of events</span>
+<span class="n">batch_of_events</span> <span class="o">=</span> <span class="n">http_handler</span><span class="o">.</span><span class="n">to_json_batch</span><span class="p">([</span><span class="n">event</span><span class="p">])</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<details class="warning">
+<summary>Use discriminated Unions to handle multiple Event classes</summary>
+<p>You'll want to use <a href="https://docs.pydantic.dev/latest/concepts/unions/#discriminated-unions">discriminated unions</a>
+as event class and use a single <code>HTTPHandler</code> for multiple Event classes to be more efficient on validation
+and to produce a correct schema. </p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Field</span>
+<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">TypedDict</span>
+
+<span class="kn">from</span> <span class="nn">cloudevents_pydantic.bindings.http</span> <span class="kn">import</span> <span class="n">HTTPHandler</span>
+<span class="kn">from</span> <span class="nn">cloudevents_pydantic.events</span> <span class="kn">import</span> <span class="n">CloudEvent</span>
+
+
+<span class="k">class</span> <span class="nc">OrderCreatedEvent</span><span class="p">(</span><span class="n">CloudEvent</span><span class="p">):</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">TypedDict</span><span class="p">(</span><span class="s2">&quot;OrderCreatedData&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;order_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">})</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;order_created&quot;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">CustomerCreatedEvent</span><span class="p">(</span><span class="n">CloudEvent</span><span class="p">):</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">TypedDict</span><span class="p">(</span><span class="s2">&quot;CustomerCreatedData&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;customer_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">})</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;customer_created&quot;</span><span class="p">]</span>
+
+
+<span class="n">Event</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">OrderCreatedEvent</span><span class="p">,</span> <span class="n">CustomerCreatedEvent</span><span class="p">],</span>
+    <span class="n">Field</span><span class="p">(</span><span class="n">discriminator</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">http_handler</span> <span class="o">=</span> <span class="n">HTTPHandler</span><span class="p">(</span><span class="n">Event</span><span class="p">)</span>
+
+<span class="n">customer_event_json</span> <span class="o">=</span> <span class="s1">&#39;{&quot;data&quot;:{&quot;customer_id&quot;:&quot;123&quot;},&quot;source&quot;:&quot;customer_service&quot;,&quot;id&quot;:&quot;123&quot;,&quot;type&quot;:&quot;customer_created&quot;,&quot;specversion&quot;:&quot;1.0&quot;,&quot;time&quot;:null,&quot;subject&quot;:null,&quot;datacontenttype&quot;:null,&quot;dataschema&quot;:null}&#39;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">http_handler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">customer_event_json</span><span class="p">)))</span>
+<span class="c1"># &lt;class &#39;__main__.CustomerCreatedEvent&#39;&gt;</span>
+</code></pre></div>
+</details>
+<h3 id="fastapi">FastAPI</h3>
+<p>Both this package and <a href="https://fastapi.tiangolo.com/">FastAPI</a> are built on top
+of <a href="https://docs.pydantic.dev/latest/">Pydantic</a>. This means you don't need to instantiate
+a <code>HTTPHandler</code> to receive CloudEvents using a <a href="https://fastapi.tiangolo.com/">FastAPI</a> endpoint.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">### Event classes omitted ###</span>
+
+<span class="n">Event</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">OrderCreatedEvent</span><span class="p">,</span> <span class="n">CustomerCreatedEvent</span><span class="p">],</span>
+    <span class="n">Field</span><span class="p">(</span><span class="n">discriminator</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="c1"># Endpoint for single events</span>
+<span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/event&quot;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">204</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">submit_event</span><span class="p">(</span>
+    <span class="n">event</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Event</span><span class="p">,</span> <span class="n">Body</span><span class="p">()],</span>
+    <span class="n">content_type</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;application/cloudevents+json; charset=UTF-8&quot;</span><span class="p">],</span> <span class="n">Header</span><span class="p">()</span>
+    <span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">do_something</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+<span class="c1"># Endpoint for event batches</span>
+<span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/batch&quot;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">204</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">submit_event_batch</span><span class="p">(</span>
+    <span class="n">event_batch</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Event</span><span class="p">],</span> <span class="n">Body</span><span class="p">()],</span>
+    <span class="n">content_type</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;application/cloudevents-batch+json; charset=UTF-8&quot;</span><span class="p">],</span> <span class="n">Header</span><span class="p">()</span>
+    <span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">event_batch</span><span class="p">:</span>
+        <span class="n">do_something</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Generate the OpenAPI schema correctly</p>
+<p>In order to have the OpenAPI spec correctly generated by FastAPI you'll need to
+work around some FastAPI limitations and manually specify some of the needed data.
+You can find a detailed example <a href="https://github.com/febus982/bootstrap-python-fastapi/blob/main/src/http_app/routes/events.py">here</a>.</p>
 </div>
 <h2 id="serialize-a-json-event">Serialize a JSON event</h2>
 <p>HTTP serialization returns header and body to be used in a HTTP request.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Custom Event class</label><label for="__tabbed_2_2">CloudEvent class</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Custom Event class</label><label for="__tabbed_3_2">CloudEvent class</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">cloudevents_pydantic.events</span> <span class="kn">import</span> <span class="n">CloudEvent</span>
@@ -624,50 +772,6 @@ about this.</p>
 <span class="n">json_string</span> <span class="o">=</span> <span class="n">http_handler</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 <span class="c1"># Batch (list) of events</span>
 <span class="n">json_batch_string</span> <span class="o">=</span> <span class="n">http_handler</span><span class="o">.</span><span class="n">to_json_batch</span><span class="p">([</span><span class="n">event</span><span class="p">])</span>
-</code></pre></div>
-</div>
-</div>
-</div>
-<h2 id="deserialize-a-json-event">Deserialize a JSON event</h2>
-<p>HTTP deserialization parses the body to reconstruct the event.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Custom Event class</label><label for="__tabbed_3_2">CloudEvent class</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">cloudevents_pydantic.events</span> <span class="kn">import</span> <span class="n">CloudEvent</span>
-<span class="kn">from</span> <span class="nn">cloudevents_pydantic.bindings.http</span> <span class="kn">import</span> <span class="n">HTTPHandler</span>
-
-<span class="k">class</span> <span class="nc">OrderCreated</span><span class="p">(</span><span class="n">CloudEvent</span><span class="p">):</span>
-    <span class="o">...</span>
-
-<span class="n">single_event_json</span> <span class="o">=</span> <span class="s1">&#39;{&quot;data&quot;:null,&quot;source&quot;:&quot;https://example.com/event-producer&quot;,&quot;id&quot;:&quot;b96267e2-87be-4f7a-b87c-82f64360d954&quot;,&quot;type&quot;:&quot;com.example.string&quot;,&quot;specversion&quot;:&quot;1.0&quot;,&quot;time&quot;:&quot;2022-07-16T12:03:20.519216+04:00&quot;,&quot;subject&quot;:null,&quot;datacontenttype&quot;:null,&quot;dataschema&quot;:null}&#39;</span>
-<span class="n">batch_event_json</span> <span class="o">=</span> <span class="s1">&#39;[{&quot;data&quot;:null,&quot;source&quot;:&quot;https://example.com/event-producer&quot;,&quot;id&quot;:&quot;b96267e2-87be-4f7a-b87c-82f64360d954&quot;,&quot;type&quot;:&quot;com.example.string&quot;,&quot;specversion&quot;:&quot;1.0&quot;,&quot;time&quot;:&quot;2022-07-16T12:03:20.519216+04:00&quot;,&quot;subject&quot;:null,&quot;datacontenttype&quot;:null,&quot;dataschema&quot;:null}]&#39;</span>
-
-<span class="n">http_handler</span> <span class="o">=</span> <span class="n">HTTPHandler</span><span class="p">(</span><span class="n">OrderCreated</span><span class="p">)</span>
-
-<span class="c1"># Single event</span>
-<span class="n">event</span> <span class="o">=</span> <span class="n">http_handler</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">single_event_json</span><span class="p">)</span>
-<span class="c1"># Batch (list) of events</span>
-<span class="n">batch_of_events</span> <span class="o">=</span> <span class="n">http_handler</span><span class="o">.</span><span class="n">from_json_batch</span><span class="p">(</span><span class="n">batch_event_json</span><span class="p">)</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">cloudevents_pydantic.events</span> <span class="kn">import</span> <span class="n">CloudEvent</span>
-<span class="kn">from</span> <span class="nn">cloudevents_pydantic.bindings.http</span> <span class="kn">import</span> <span class="n">HTTPHandler</span>
-
-<span class="n">minimal_attributes</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;order_created&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/event-producer&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;b96267e2-87be-4f7a-b87c-82f64360d954&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;specversion&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="p">}</span>
-
-<span class="n">http_handler</span> <span class="o">=</span> <span class="n">HTTPHandler</span><span class="p">()</span>
-<span class="n">event</span> <span class="o">=</span> <span class="n">CloudEvent</span><span class="o">.</span><span class="n">event_factory</span><span class="p">(</span><span class="o">**</span><span class="n">minimal_attributes</span><span class="p">)</span>
-
-<span class="c1"># Single event</span>
-<span class="n">event</span> <span class="o">=</span> <span class="n">http_handler</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-<span class="c1"># Batch (list) of events</span>
-<span class="n">batch_of_events</span> <span class="o">=</span> <span class="n">http_handler</span><span class="o">.</span><span class="n">to_json_batch</span><span class="p">([</span><span class="n">event</span><span class="p">])</span>
 </code></pre></div>
 </div>
 </div>
@@ -742,7 +846,7 @@ about this.</p>
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.expand", "navigation.top", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "stable", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d6f25eb3.min.js"></script>
+      <script src="../../assets/javascripts/bundle.525ec568.min.js"></script>
       
     
   </body>
