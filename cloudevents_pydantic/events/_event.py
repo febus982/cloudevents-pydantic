@@ -22,7 +22,7 @@
 # ==============================================================================
 import base64
 import datetime
-from typing import Annotated, Any, Dict, Optional, Union
+from typing import Annotated, Any, Optional, Union
 
 from pydantic import (
     BaseModel,
@@ -127,8 +127,9 @@ class CloudEvent(BaseModel):  # type: ignore
     Using `orjson` could solve this, perhaps it could be a future improvement.
     """
 
+    # Typing for return value here breaks `.model_json_schema(mode='serialization')`
     @model_serializer(when_used="json")
-    def base64_json_serializer(self) -> Dict[str, Any]:
+    def base64_json_serializer(self):
         """Takes care of handling binary data serialization into `data_base64`
         attribute.
 
