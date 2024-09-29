@@ -20,59 +20,24 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
+
 from cloudevents.pydantic.fields_docs import FIELD_DESCRIPTIONS
 from pydantic import Field
 
-FieldData = Field(
-    title=FIELD_DESCRIPTIONS["data"].get("title"),
-    description=FIELD_DESCRIPTIONS["data"].get("description"),
-    examples=[FIELD_DESCRIPTIONS["data"].get("example")],
-)
 
-FieldSource = Field(
-    title=FIELD_DESCRIPTIONS["source"].get("title"),
-    description=FIELD_DESCRIPTIONS["source"].get("description"),
-    examples=[FIELD_DESCRIPTIONS["source"].get("example")],
-)
+def _ce_field_metadata(field_name: str) -> Field:
+    return Field(
+        title=FIELD_DESCRIPTIONS[field_name].get("title"),
+        description=FIELD_DESCRIPTIONS[field_name].get("description"),
+        examples=[FIELD_DESCRIPTIONS[field_name].get("example")],
+    )
 
-FieldTitle = Field(
-    title=FIELD_DESCRIPTIONS["id"].get("title"),
-    description=FIELD_DESCRIPTIONS["id"].get("description"),
-    examples=[FIELD_DESCRIPTIONS["id"].get("example")],
-)
-
-FieldType = Field(
-    title=FIELD_DESCRIPTIONS["type"].get("title"),
-    description=FIELD_DESCRIPTIONS["type"].get("description"),
-    examples=[FIELD_DESCRIPTIONS["type"].get("example")],
-)
-
-FieldSpecVersion = Field(
-    title=FIELD_DESCRIPTIONS["specversion"].get("title"),
-    description=FIELD_DESCRIPTIONS["specversion"].get("description"),
-    examples=[FIELD_DESCRIPTIONS["specversion"].get("example")],
-)
-
-FieldTime = Field(
-    title=FIELD_DESCRIPTIONS["time"].get("title"),
-    description=FIELD_DESCRIPTIONS["time"].get("description"),
-    examples=[FIELD_DESCRIPTIONS["time"].get("example")],
-)
-
-FieldSubject = Field(
-    title=FIELD_DESCRIPTIONS["subject"].get("title"),
-    description=FIELD_DESCRIPTIONS["subject"].get("description"),
-    examples=[FIELD_DESCRIPTIONS["subject"].get("example")],
-)
-
-FieldDataContentType = Field(
-    title=FIELD_DESCRIPTIONS["datacontenttype"].get("title"),
-    description=FIELD_DESCRIPTIONS["datacontenttype"].get("description"),
-    examples=[FIELD_DESCRIPTIONS["datacontenttype"].get("example")],
-)
-
-FieldDataSchema = Field(
-    title=FIELD_DESCRIPTIONS["dataschema"].get("title"),
-    description=FIELD_DESCRIPTIONS["dataschema"].get("description"),
-    examples=[FIELD_DESCRIPTIONS["dataschema"].get("example")],
-)
+FieldData: Field = _ce_field_metadata("data")
+FieldSource: Field = _ce_field_metadata("source")
+FieldId: Field = _ce_field_metadata("id")
+FieldType: Field = _ce_field_metadata("type")
+FieldSpecVersion: Field = _ce_field_metadata("specversion")
+FieldTime: Field = _ce_field_metadata("time")
+FieldSubject: Field = _ce_field_metadata("subject")
+FieldDataContentType: Field = _ce_field_metadata("datacontenttype")
+FieldDataSchema: Field = _ce_field_metadata("dataschema")

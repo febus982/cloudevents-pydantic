@@ -43,7 +43,7 @@ from .fields.metadata import (
     FieldSpecVersion,
     FieldSubject,
     FieldTime,
-    FieldTitle,
+    FieldId,
     FieldType,
 )
 from .fields.types import URI, Binary, DateTime, SpecVersion, String, URIReference
@@ -91,7 +91,7 @@ class CloudEvent(BaseModel):  # type: ignore
 
     # Mandatory fields
     source: Annotated[URIReference, FieldSource]
-    id: Annotated[String, FieldTitle]
+    id: Annotated[String, FieldId]
     type: Annotated[String, FieldType]
     specversion: Annotated[SpecVersion, FieldSpecVersion]
 
