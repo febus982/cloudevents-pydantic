@@ -27,7 +27,7 @@ from pydantic import BaseModel, ValidationError
 from typing_extensions import TypedDict
 
 from cloudevents_pydantic.events import CloudEvent
-from cloudevents_pydantic.events.field_types import (
+from cloudevents_pydantic.events.fields.types import (
     URI,
     Binary,
     Integer,

@@ -41,7 +41,7 @@ from pydantic import Field
 
 from cloudevents_pydantic.bindings.http import HTTPHandler
 from cloudevents_pydantic.events import CloudEvent
-from cloudevents_pydantic.events.field_types import Binary
+from cloudevents_pydantic.events.fields.types import Binary
 
 valid_json = '{"data_base64":"dGVzdA==","source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
 test_iterations = 1000000

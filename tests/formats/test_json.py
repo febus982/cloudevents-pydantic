@@ -32,7 +32,7 @@ from pydantic import TypeAdapter, ValidationError
 from typing_extensions import TypedDict
 
 from cloudevents_pydantic.events import CloudEvent
-from cloudevents_pydantic.events.field_types import Binary, SpecVersion
+from cloudevents_pydantic.events.fields.types import Binary, SpecVersion
 from cloudevents_pydantic.formats.json import (
     from_json,
     from_json_batch,

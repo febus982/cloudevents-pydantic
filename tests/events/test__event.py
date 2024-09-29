@@ -29,7 +29,7 @@ from pydantic import ValidationError
 from ulid import ULID
 
 from cloudevents_pydantic.events import CloudEvent
-from cloudevents_pydantic.events.field_types import SpecVersion
+from cloudevents_pydantic.events.fields.types import SpecVersion
 
 test_attributes = {
     "type": "com.example.string",

@@ -22,11 +22,12 @@
 # ==============================================================================
 import base64
 import datetime
-from typing import Any, Dict, Optional, Union
+from typing import Annotated, Any, Dict, Optional, Union
 
 from pydantic import (
     BaseModel,
     ConfigDict,
+    Field,
     model_serializer,
     model_validator,
 )
@@ -34,17 +35,18 @@ from pydantic.fields import FieldInfo
 from pydantic_core.core_schema import ValidationInfo
 from ulid import ULID
 
-from .annotations import (
-    DataAnnotation,
-    DataContentTypeAnnotation,
-    DataSchemaAnnotation,
-    IdAnnotation,
-    SourceAnnotation,
-    SubjectAnnotation,
-    TimeAnnotation,
-    TypeAnnotation,
+from .fields.metadata import (
+    FieldData,
+    FieldDataContentType,
+    FieldDataSchema,
+    FieldSource,
+    FieldSpecVersion,
+    FieldSubject,
+    FieldTime,
+    FieldTitle,
+    FieldType,
 )
-from .field_types import Binary, SpecVersion
+from .fields.types import URI, Binary, DateTime, SpecVersion, String, URIReference
 
 DEFAULT_SPECVERSION = SpecVersion.v1_0
 
@@ -85,19 +87,21 @@ class CloudEvent(BaseModel):  # type: ignore
             **kwargs,
         )
 
-    data: DataAnnotation
+    data: Annotated[Any, Field(default=None), FieldData]
 
     # Mandatory fields
-    source: SourceAnnotation
-    id: IdAnnotation
-    type: TypeAnnotation
-    specversion: SpecVersion
+    source: Annotated[URIReference, FieldSource]
+    id: Annotated[String, FieldTitle]
+    type: Annotated[String, FieldType]
+    specversion: Annotated[SpecVersion, FieldSpecVersion]
 
     # Optional fields
-    time: TimeAnnotation
-    subject: SubjectAnnotation
-    datacontenttype: DataContentTypeAnnotation
-    dataschema: DataSchemaAnnotation
+    time: Annotated[Optional[DateTime], Field(default=None), FieldTime]
+    subject: Annotated[Optional[String], Field(default=None), FieldSubject]
+    datacontenttype: Annotated[
+        Optional[String], Field(default=None), FieldDataContentType
+    ]
+    dataschema: Annotated[Optional[URI], Field(default=None), FieldDataSchema]
 
     model_config = ConfigDict(
         extra="forbid",

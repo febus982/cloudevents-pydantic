@@ -93,52 +93,54 @@ You can use either `str` values or python objects (see the `time` field)
 ///
 ///
 
-## Create your own event subclasses in the right way
+## Best practices when creating your event classes
 
 When you create event types in your app you will want to make sure to follow these best practices:
 
 * Use `TypedDict` for structured data instead of nested pydantic models (as specified in
   [Pydantic performance](https://docs.pydantic.dev/latest/concepts/performance/#use-typeddict-over-nested-models)
   documentatin)
-* Use the fields types defined in the `cloudevents_pydantic.events.field_types`. These types will
+* Use the fields types defined in the `cloudevents_pydantic.events.field.types`. These types will
   be kept up to date and make sure their validation, serialization and deserialization rules
   will be compliant with the [CloudEvents spec](https://github.com/cloudevents/spec/tree/main).
+* Write your own pydantic `Field` for data
+* Use the fields available in the `cloudevents_pydantic.events.field.metadata` when overriding
+  the cloudevent fields to inherit CloudEvents field descriptive metadata (i.e. title, description)
+  will be populated in the schema.
 
-/// tab | class Syntax
+Example:
+
 ```python
-from typing import TypedDict, Literal
-from cloudevents_pydantic.events import CloudEvent, field_types
+from typing import Annotated, Literal, TypedDict
+
+from pydantic import Field
+
+from cloudevents_pydantic.events import CloudEvent
+from cloudevents_pydantic.events.fields import metadata, types
+
 
 class OrderCreatedData(TypedDict):
-    a_str: field_types.String
-    an_int: field_types.Integer
+    a_str: types.String
+    an_int: types.Integer
+
+
+OrderCreatedDataField = Field(
+    title="An order representation",
+    description="A nice new order has been created! OMG!",
+    examples=["{'a_str': 'a nice string', 'an_int': 1}"],
+)
+
 
 class OrderCreated(CloudEvent):
-    data: OrderCreatedData
-    type: Literal["order_created"] = "order_created"
-    source: field_types.String = "order_service"
-
-event = OrderCreated.event_factory(
-    data={"a_str": "a nice string", "an_int": 1},
-)
+    data: Annotated[OrderCreatedData, OrderCreatedDataField]
+    type: Annotated[
+        Literal["order_created"], Field(default="order_created"), metadata.FieldType
+    ]
+    source: Annotated[
+        Literal["order_service"], Field(default="order_service"), metadata.FieldSource
+    ]
 ```
-///
 
-/// tab | inline Syntax
-```python
-from typing import TypedDict, Literal
-from cloudevents_pydantic.events import CloudEvent, field_types
-
-class OrderCreated(CloudEvent):
-    data: TypedDict("OrderCreatedData", {"a_str": field_types.String, "an_int": field_types.Integer})
-    type: Literal["order_created"] = "order_created"
-    source: field_types.String = "order_service"
-
-event = OrderCreated.event_factory(
-    data={"a_str": "a nice string", "an_int": 1},
-)
-```
-///
 
 /// admonition | Use subclasses
     type: warning

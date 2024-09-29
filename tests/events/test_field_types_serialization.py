@@ -25,7 +25,7 @@ from typing import Union
 import pytest
 from pydantic import BaseModel
 
-from cloudevents_pydantic.events.field_types import (
+from cloudevents_pydantic.events.fields.types import (
     Binary,
     Boolean,
     URIReference,

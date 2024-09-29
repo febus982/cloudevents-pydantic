@@ -20,37 +20,4 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
-from typing import Annotated, Any, Optional
 
-from pydantic import Field
-
-from cloudevents_pydantic.events.fields.metadata import (
-    FieldData,
-    FieldDataContentType,
-    FieldDataSchema,
-    FieldSource,
-    FieldSpecVersion,
-    FieldSubject,
-    FieldTime,
-    FieldTitle,
-    FieldType,
-)
-from cloudevents_pydantic.events.fields.types import (
-    URI,
-    DateTime,
-    SpecVersion,
-    String,
-    URIReference,
-)
-
-DataAnnotation = Annotated[Any, Field(default=None), FieldData]
-SourceAnnotation = Annotated[URIReference, FieldSource]
-IdAnnotation = Annotated[String, FieldTitle]
-TypeAnnotation = Annotated[String, FieldType]
-SpecVersionAnnotation = Annotated[SpecVersion, FieldSpecVersion]
-TimeAnnotation = Annotated[Optional[DateTime], Field(default=None), FieldTime]
-SubjectAnnotation = Annotated[Optional[String], Field(default=None), FieldSubject]
-DataContentTypeAnnotation = Annotated[
-    Optional[String], Field(default=None), FieldDataContentType
-]
-DataSchemaAnnotation = Annotated[Optional[URI], Field(default=None), FieldDataSchema]
