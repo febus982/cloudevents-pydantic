@@ -22,22 +22,23 @@
 # ==============================================================================
 
 from cloudevents.pydantic.fields_docs import FIELD_DESCRIPTIONS
-from pydantic import Field
+from pydantic.fields import Field, FieldInfo
 
 
-def _ce_field_metadata(field_name: str) -> Field:
+def _ce_field_metadata(field_name: str) -> FieldInfo:
     return Field(
         title=FIELD_DESCRIPTIONS[field_name].get("title"),
         description=FIELD_DESCRIPTIONS[field_name].get("description"),
         examples=[FIELD_DESCRIPTIONS[field_name].get("example")],
     )
 
-FieldData: Field = _ce_field_metadata("data")
-FieldSource: Field = _ce_field_metadata("source")
-FieldId: Field = _ce_field_metadata("id")
-FieldType: Field = _ce_field_metadata("type")
-FieldSpecVersion: Field = _ce_field_metadata("specversion")
-FieldTime: Field = _ce_field_metadata("time")
-FieldSubject: Field = _ce_field_metadata("subject")
-FieldDataContentType: Field = _ce_field_metadata("datacontenttype")
-FieldDataSchema: Field = _ce_field_metadata("dataschema")
+
+FieldData: FieldInfo = _ce_field_metadata("data")
+FieldSource: FieldInfo = _ce_field_metadata("source")
+FieldId: FieldInfo = _ce_field_metadata("id")
+FieldType: FieldInfo = _ce_field_metadata("type")
+FieldSpecVersion: FieldInfo = _ce_field_metadata("specversion")
+FieldTime: FieldInfo = _ce_field_metadata("time")
+FieldSubject: FieldInfo = _ce_field_metadata("subject")
+FieldDataContentType: FieldInfo = _ce_field_metadata("datacontenttype")
+FieldDataSchema: FieldInfo = _ce_field_metadata("dataschema")

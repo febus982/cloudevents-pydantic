@@ -22,12 +22,12 @@
 # ==============================================================================
 from ._fields import (
     FieldData,
-    FieldSource,
-    FieldId,
-    FieldType,
-    FieldSpecVersion,
-    FieldTime,
-    FieldSubject,
     FieldDataContentType,
     FieldDataSchema,
+    FieldId,
+    FieldSource,
+    FieldSpecVersion,
+    FieldSubject,
+    FieldTime,
+    FieldType,
 )

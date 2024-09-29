@@ -39,11 +39,11 @@ from .fields.metadata import (
     FieldData,
     FieldDataContentType,
     FieldDataSchema,
+    FieldId,
     FieldSource,
     FieldSpecVersion,
     FieldSubject,
     FieldTime,
-    FieldId,
     FieldType,
 )
 from .fields.types import URI, Binary, DateTime, SpecVersion, String, URIReference
