@@ -24,11 +24,9 @@ import base64
 import datetime
 from typing import Any, Dict, Optional, Union
 
-from cloudevents.pydantic.fields_docs import FIELD_DESCRIPTIONS
 from pydantic import (
     BaseModel,
     ConfigDict,
-    Field,
     model_serializer,
     model_validator,
 )
@@ -36,7 +34,17 @@ from pydantic.fields import FieldInfo
 from pydantic_core.core_schema import ValidationInfo
 from ulid import ULID
 
-from .field_types import URI, Binary, DateTime, SpecVersion, String, URIReference
+from .annotations import (
+    DataAnnotation,
+    DataContentTypeAnnotation,
+    DataSchemaAnnotation,
+    IdAnnotation,
+    SourceAnnotation,
+    SubjectAnnotation,
+    TimeAnnotation,
+    TypeAnnotation,
+)
+from .field_types import Binary, SpecVersion
 
 DEFAULT_SPECVERSION = SpecVersion.v1_0
 
@@ -77,60 +85,19 @@ class CloudEvent(BaseModel):  # type: ignore
             **kwargs,
         )
 
-    data: Any = Field(
-        title=FIELD_DESCRIPTIONS["data"].get("title"),
-        description=FIELD_DESCRIPTIONS["data"].get("description"),
-        examples=[FIELD_DESCRIPTIONS["data"].get("example")],
-        default=None,
-    )
+    data: DataAnnotation
 
     # Mandatory fields
-    source: URIReference = Field(
-        title=FIELD_DESCRIPTIONS["source"].get("title"),
-        description=FIELD_DESCRIPTIONS["source"].get("description"),
-        examples=[FIELD_DESCRIPTIONS["source"].get("example")],
-    )
-    id: String = Field(
-        title=FIELD_DESCRIPTIONS["id"].get("title"),
-        description=FIELD_DESCRIPTIONS["id"].get("description"),
-        examples=[FIELD_DESCRIPTIONS["id"].get("example")],
-    )
-    type: String = Field(
-        title=FIELD_DESCRIPTIONS["type"].get("title"),
-        description=FIELD_DESCRIPTIONS["type"].get("description"),
-        examples=[FIELD_DESCRIPTIONS["type"].get("example")],
-    )
-    specversion: SpecVersion = Field(
-        title=FIELD_DESCRIPTIONS["specversion"].get("title"),
-        description=FIELD_DESCRIPTIONS["specversion"].get("description"),
-        examples=[FIELD_DESCRIPTIONS["specversion"].get("example")],
-    )
+    source: SourceAnnotation
+    id: IdAnnotation
+    type: TypeAnnotation
+    specversion: SpecVersion
 
     # Optional fields
-    time: Optional[DateTime] = Field(
-        title=FIELD_DESCRIPTIONS["time"].get("title"),
-        description=FIELD_DESCRIPTIONS["time"].get("description"),
-        examples=[FIELD_DESCRIPTIONS["time"].get("example")],
-        default=None,
-    )
-    subject: Optional[String] = Field(
-        title=FIELD_DESCRIPTIONS["subject"].get("title"),
-        description=FIELD_DESCRIPTIONS["subject"].get("description"),
-        examples=[FIELD_DESCRIPTIONS["subject"].get("example")],
-        default=None,
-    )
-    datacontenttype: Optional[String] = Field(
-        title=FIELD_DESCRIPTIONS["datacontenttype"].get("title"),
-        description=FIELD_DESCRIPTIONS["datacontenttype"].get("description"),
-        examples=[FIELD_DESCRIPTIONS["datacontenttype"].get("example")],
-        default=None,
-    )
-    dataschema: Optional[URI] = Field(
-        title=FIELD_DESCRIPTIONS["dataschema"].get("title"),
-        description=FIELD_DESCRIPTIONS["dataschema"].get("description"),
-        examples=[FIELD_DESCRIPTIONS["dataschema"].get("example")],
-        default=None,
-    )
+    time: TimeAnnotation
+    subject: SubjectAnnotation
+    datacontenttype: DataContentTypeAnnotation
+    dataschema: DataSchemaAnnotation
 
     model_config = ConfigDict(
         extra="forbid",
