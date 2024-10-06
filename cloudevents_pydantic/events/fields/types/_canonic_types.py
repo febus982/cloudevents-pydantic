@@ -84,11 +84,29 @@ We should also check for U+D800-U+DBFF and U+DC00-U+DFFF unless used in pair
 so we can avoid the scenario in the regex and make this faster.
 """
 str_constraint = (
-    r"^[^"
+    r"^"
+    r"[^"
     r"\u0000-\u001F\u007F-\u009F"
     r"\uFDD0-\uFDEF\uFFFE\uFFFF"
-    r"\U0001fffe\U0001ffff\U0002fffe\U0002ffff\U0003fffe\U0003ffff\U0004fffe\U0004ffff\U0005fffe\U0005ffff\U0006fffe\U0006ffff\U0007fffe\U0007ffff\U0008fffe\U0008ffff\U0009fffe\U0009ffff\U000afffe\U000affff\U000bfffe\U000bffff\U000cfffe\U000cffff\U000dfffe\U000dffff\U000efffe\U000effff\U000ffffe\U000fffff\U0010fffe\U0010ffff"
-    r"]+$"
+    r"\u{1FFFE}\u{1FFFF}"
+    r"\u{2FFFE}\u{2FFFF}"
+    r"\u{3FFFE}\u{3FFFF}"
+    r"\u{4FFFE}\u{4FFFF}"
+    r"\u{5FFFE}\u{5FFFF}"
+    r"\u{6FFFE}\u{6FFFF}"
+    r"\u{7FFFE}\u{7FFFF}"
+    r"\u{8FFFE}\u{8FFFF}"
+    r"\u{9FFFE}\u{9FFFF}"
+    r"\u{AFFFE}\u{AFFFF}"
+    r"\u{BFFFE}\u{BFFFF}"
+    r"\u{CFFFE}\u{CFFFF}"
+    r"\u{DFFFE}\u{DFFFF}"
+    r"\u{EFFFE}\u{EFFFF}"
+    r"\u{FFFFE}\u{FFFFF}"
+    r"\u{10FFFE}\u{10FFFF}"
+    r"]+"
+    r""
+    r"$"
 )
 
 
