@@ -83,11 +83,9 @@ We should also check for U+D800-U+DBFF and U+DC00-U+DFFF unless used in pair
 (malformed surrogate characters) but pydantic is unhappy to handle them anyway
 so we can avoid the scenario in the regex and make this faster.
 """
-str_constraint = (
-    r"^"
-    r"[^"
-    r"\u0000-\u001F\u007F-\u009F"
-    r"\uFDD0-\uFDEF\uFFFE\uFFFF"
+class_control = r"\u0000-\u001F\u007F-\u009F"
+class_nonchar_utf16_range = r"\uFDD0-\uFDEF\uFFFE\uFFFF"
+class_nonchar_utf32_range = (
     r"\u{1FFFE}\u{1FFFF}"
     r"\u{2FFFE}\u{2FFFF}"
     r"\u{3FFFE}\u{3FFFF}"
@@ -104,9 +102,19 @@ str_constraint = (
     r"\u{EFFFE}\u{EFFFF}"
     r"\u{FFFFE}\u{FFFFF}"
     r"\u{10FFFE}\u{10FFFF}"
-    r"]+"
-    r""
+)
+str_constraint = (
+    r"^"
+    r"[^"
+    + class_control
+    + class_nonchar_utf16_range
+    + class_nonchar_utf32_range
+    + r"]+"
     r"$"
+)
+
+str_constraint_asyncapi_compat = (
+    r"^" r"[^" + class_control + class_nonchar_utf16_range + r"]+" r"$"
 )
 
 
@@ -121,7 +129,7 @@ Integer = Annotated[int, Ge(-2147483648), Le(2147483648)]
 A whole number in the range -2,147,483,648 to +2,147,483,647 inclusive
 """
 
-String = Annotated[str, StringConstraints(pattern=str_constraint)]
+String = Annotated[str, StringConstraints(pattern=str_constraint_asyncapi_compat)]
 """
 Sequence of allowable Unicode characters
 """
