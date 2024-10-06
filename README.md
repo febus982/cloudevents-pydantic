@@ -15,6 +15,9 @@
 This is an implementation of the [CloudEvents spec](https://github.com/cloudevents/spec/tree/main) using
 [Pydantic V2](https://docs.pydantic.dev/latest/) for high performance during validation and serialization.
 
+It is meant to support natively [FastAPI](https://fastapi.tiangolo.com/)
+and [FastStream](https://faststream.airt.ai/latest/) (WIP)
+
 Currently supported bindings:
 
 | Binding | Format | Single  |  Batch  |
