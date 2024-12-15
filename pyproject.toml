@@ -24,6 +24,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Typing :: Typed"
 ]
 
@@ -40,7 +41,7 @@ build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poetry.dependencies]
 cloudevents = "^1.11.0"
-python = ">=3.9,<3.13"
+python = ">=3.9,<3.14"
 pydantic = "^2.9.1"
 python-ulid = "^3.0.0"
 
@@ -53,7 +54,6 @@ jsonschema = "^4.23.0"
 mkdocs = ">=1.4.3"
 mkdocstrings = { version = ">=0.24.0", extras = ["python"] }
 mkdocs-awesome-pages-plugin = "*"
-mkdocs-macros-adr-summary = "*"
 mkdocs-gen-files = ">=0.5.0"
 mkdocs-material = ">=9.1.16"
 mike = ">=2.0.0"
