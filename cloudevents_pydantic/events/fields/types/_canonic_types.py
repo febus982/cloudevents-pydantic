@@ -42,6 +42,10 @@ def binary_serializer(value: bytes) -> str:
     return base64.b64encode(value).decode()
 
 
+def time_serializer(value: datetime) -> str:
+    return value.isoformat()
+
+
 def binary_validator(value: Union[str, bytes, bytearray, memoryview]) -> bytes:
     if isinstance(value, (bytes, bytearray, memoryview)):
         return value
@@ -171,7 +175,7 @@ URIReference = Annotated[
 Uniform resource identifier reference
 """
 
-DateTime = datetime
+DateTime = Annotated[datetime, PlainSerializer(time_serializer)]
 """
 Date and time expression using the Gregorian Calendar
 """
