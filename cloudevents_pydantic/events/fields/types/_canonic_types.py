@@ -122,7 +122,9 @@ str_constraint_asyncapi_compat = (
 )
 
 str_constraint_mime_type = (
-    r"^(application|audio|example|font|haptics|image|message|model|multipart|text|video)/"
+    r"^"
+    r"(application|audio|example|font|haptics|image|message|model|multipart|text|video)"
+    r"/"
 )
 """
 Simplified validation regex for mime types. Uses registries defined on
