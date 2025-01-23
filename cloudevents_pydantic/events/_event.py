@@ -47,6 +47,7 @@ from .fields.metadata import (
     FieldType,
 )
 from .fields.types import URI, Binary, DateTime, SpecVersion, String, URIReference
+from .fields.types._canonic_types import MimeType
 
 DEFAULT_SPECVERSION = SpecVersion.v1_0
 
@@ -99,7 +100,7 @@ class CloudEvent(BaseModel):  # type: ignore
     time: Annotated[Optional[DateTime], Field(default=None), FieldTime]
     subject: Annotated[Optional[String], Field(default=None), FieldSubject]
     datacontenttype: Annotated[
-        Optional[String], Field(default=None), FieldDataContentType
+        Optional[MimeType], Field(default=None), FieldDataContentType
     ]
     dataschema: Annotated[Optional[URI], Field(default=None), FieldDataSchema]
 

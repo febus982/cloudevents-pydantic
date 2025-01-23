@@ -117,6 +117,14 @@ str_constraint_asyncapi_compat = (
     r"^" r"[^" + class_control + class_nonchar_utf16_range + r"]+" r"$"
 )
 
+str_constraint_mime_type = (
+    r"^(application|audio|example|font|haptics|image|message|model|multipart|text|video)/"
+)
+"""
+Simplified validation regex for mime types. Uses registries defined on
+https://www.iana.org/assignments/media-types/media-types.xhtml
+"""
+
 
 # TODO: Add types docstrings
 Boolean = Annotated[bool, PlainSerializer(bool_serializer)]
@@ -130,6 +138,11 @@ A whole number in the range -2,147,483,648 to +2,147,483,647 inclusive
 """
 
 String = Annotated[str, StringConstraints(pattern=str_constraint_asyncapi_compat)]
+"""
+Sequence of allowable Unicode characters
+"""
+
+MimeType = Annotated[str, StringConstraints(pattern=str_constraint_mime_type)]
 """
 Sequence of allowable Unicode characters
 """
