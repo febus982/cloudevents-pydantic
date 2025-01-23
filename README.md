@@ -79,34 +79,34 @@ Official SDK using http model: 6.780242209002608
 
 ## Supported specification features
 
-| Core Specification | [v1.0](https://github.com/cloudevents/spec/blob/v1.0/spec.md) |
-|--------------------|:-------------------------------------------------------------:|
-| CloudEvents Core   |                               ✅                               |
+| Core Specification | [v1.0](https://github.com/cloudevents/spec/blob/v1.0.2/spec.md) |
+|--------------------|:---------------------------------------------------------------:|
+| CloudEvents Core   |                                ✅                                |
 
 ---
 
-| Event Formats         | [v1.0](https://github.com/cloudevents/spec/blob/v1.0/spec.md#event-format) |
-|-----------------------|:--------------------------------------------------------------------------:|
-| AVRO Event Format     |                                     ❌                                      |
-| JSON Event Format     |                                     ✅                                      |
+| Event Formats     | [v1.0](https://github.com/cloudevents/spec/blob/v1.0.2/spec.md#event-format) |
+|-------------------|:----------------------------------------------------------------------------:|
+| AVRO Event Format |                                      ❌                                       |
+| JSON Event Format |                                      ✅                                       |
 
 ---
 
-| Protocol Bindings      | [v1.0](https://github.com/cloudevents/spec/blob/v1.0/spec.md#protocol-binding) |
-|------------------------|:------------------------------------------------------------------------------:|
-| HTTP Protocol Binding  |                                       ✅                                        |
-| Kafka Protocol Binding |                                       ❌                                        |
+| Protocol Bindings      | [v1.0](https://github.com/cloudevents/spec/blob/v1.0.2/spec.md#protocol-binding) |
+|------------------------|:--------------------------------------------------------------------------------:|
+| HTTP Protocol Binding  |                                        ✅                                         |
+| Kafka Protocol Binding |                                        ❌                                         |
 
 ---
 
-| Content Modes    | [v1.0](https://github.com/cloudevents/spec/blob/v1.0/http-protocol-binding.md#13-content-modes) |
-|------------------|:-----------------------------------------------------------------------------------------------:|
-| HTTP Binary      |                                                ✅                                                |
-| HTTP Structured  |                                                ✅                                                |
-| HTTP Batch       |                                                ✅                                                |
-| Kafka Binary     |                                                ❌                                                |
-| Kafka Structured |                                                ❌                                                |
-| Kafka Batch      |                                                ❌                                                |
+| Content Modes    | [v1.0](https://github.com/cloudevents/spec/blob/v1.0.2/http-protocol-binding.md#13-content-modes) |
+|------------------|:-------------------------------------------------------------------------------------------------:|
+| HTTP Binary      |                                                 ✅                                                 |
+| HTTP Structured  |                                                 ✅                                                 |
+| HTTP Batch       |                                                 ✅                                                 |
+| Kafka Binary     |                                                 ❌                                                 |
+| Kafka Structured |                                                 ❌                                                 |
+| Kafka Batch      |                                                 ❌                                                 |
 
 ## Commands for development
 
