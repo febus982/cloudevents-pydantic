@@ -1,4 +1,5 @@
 # cloudevents-pydantic
+
 ![Static Badge](https://img.shields.io/badge/Python-3.9_%7C_3.10_%7C_3.11_%7C_3.12_%7C_3.13-blue?logo=python&logoColor=white)
 [![Stable Version](https://img.shields.io/pypi/v/cloudevents-pydantic?color=blue)](https://pypi.org/project/cloudevents-pydantic/)
 [![stability-wip](https://img.shields.io/badge/stability-wip-lightgrey.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#work-in-progress)
@@ -17,15 +18,6 @@ This is an implementation of the [CloudEvents spec](https://github.com/cloudeven
 
 It is meant to support natively [FastAPI](https://fastapi.tiangolo.com/)
 and [FastStream](https://faststream.airt.ai/latest/) (WIP)
-
-Currently supported bindings:
-
-| Binding | Format | Single  |  Batch  |
-|---------|:-------|:-------:|:-------:|
-| HTTP    | JSON   |    ✅    |    ✅    |
-| HTTP    | Binary | planned | planned |
-| KAFKA   | JSON   | planned | planned |
-| KAFKA   | Binary | planned | planned |
 
 ## How to use
 
@@ -69,21 +61,52 @@ for details on how to create custom events.
 Using pydantic gives a great performance boost if compared to the official SDK. (there's obviously
 some performance issue in the official serialization using pydantic)
 
-These results come from a Macbook Pro M3 Max on python 3.12. Feel free to run the `benchmark.py`
+These results come from a Macbook Pro M4 Pro on python 3.13. Feel free to run the `benchmark.py`
 script yourself.
 
 ```
+==== 1M iterations benchmark ====
 Timings for HTTP JSON deserialization:
-This package: 3.0855846670019673
-Official SDK with pydantic model: 15.35431600001175
-Official SDK with http model: 13.728038166998886
+This package: 2.3955996250006137
+Official SDK using pydantic model: 11.389213957998436
+Official SDK using http model: 10.174893917006557
 
 Timings for HTTP JSON serialization:
-This package: 4.292417042001034
-Official SDK with pydantic model: 44.50933354199515
-Official SDK with http model: 8.929204874992138
+This package: 3.497491959002218
+Official SDK using pydantic model: 31.92037604199868
+Official SDK using http model: 6.780242209002608
 ```
 
+## Supported specification features
+
+| Core Specification | [v1.0](https://github.com/cloudevents/spec/blob/v1.0/spec.md) |
+|--------------------|:-------------------------------------------------------------:|
+| CloudEvents Core   |                               ✅                               |
+
+---
+
+| Event Formats         | [v1.0](https://github.com/cloudevents/spec/blob/v1.0/spec.md#event-format) |
+|-----------------------|:--------------------------------------------------------------------------:|
+| AVRO Event Format     |                                     ❌                                      |
+| JSON Event Format     |                                     ✅                                      |
+
+---
+
+| Protocol Bindings      | [v1.0](https://github.com/cloudevents/spec/blob/v1.0/spec.md#protocol-binding) |
+|------------------------|:------------------------------------------------------------------------------:|
+| HTTP Protocol Binding  |                                       ✅                                        |
+| Kafka Protocol Binding |                                       ❌                                        |
+
+---
+
+| Content Modes    | [v1.0](https://github.com/cloudevents/spec/blob/v1.0/http-protocol-binding.md#13-content-modes) |
+|------------------|:-----------------------------------------------------------------------------------------------:|
+| HTTP Binary      |                                                ✅                                                |
+| HTTP Structured  |                                                ✅                                                |
+| HTTP Batch       |                                                ✅                                                |
+| Kafka Binary     |                                                ❌                                                |
+| Kafka Structured |                                                ❌                                                |
+| Kafka Batch      |                                                ❌                                                |
 
 ## Commands for development
 
