@@ -4,5 +4,5 @@
     <option name="executionMode" value="BINARY" />
     <option name="sdkName" value="Poetry (sqlalchemy-bind-manager)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (cloudevents-pydantic)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.13 virtualenv at ~/Library/Caches/pypoetry/virtualenvs/cloudevents-pydantic-vS0eeHfK-py3.13" project-jdk-type="Python SDK" />
 </project>
