@@ -26,7 +26,7 @@ from unittest.mock import MagicMock, call, patch
 import pytest
 from pydantic import Field, TypeAdapter
 
-from cloudevents_pydantic.bindings.http import HTTPHandler
+from cloudevents_pydantic.bindings.http import HTTPComponents, HTTPHandler
 from cloudevents_pydantic.events import CloudEvent
 from cloudevents_pydantic.formats import json
 
@@ -167,3 +167,124 @@ def test_from_json_batch(from_json_batch_spy):
     assert event == SomeEvent(**test_attributes)
     assert event != CloudEvent(**test_attributes)
     assert isinstance(event, SomeEvent)
+
+
+@pytest.mark.parametrize(
+    ["raw_value", "expected_value"],
+    [
+        ("Euro € 😀", "Euro%20%E2%82%AC%20%F0%9F%98%80"),
+        ('"', "%22"),
+        (" ", "%20"),
+        ("%", "%25"),
+        ("clean", "clean"),
+    ],
+)
+def test_header_encoder(raw_value, expected_value):
+    assert HTTPHandler()._header_encode(raw_value) == expected_value
+
+
+@pytest.mark.parametrize(
+    ["expected_value", "raw_value"],
+    [
+        ("Euro € 😀", "Euro%20%E2%82%AC%20%F0%9F%98%80"),
+        ('"', "%22"),
+        (" ", "%20"),
+        ("%", "%25"),
+        ("clean", "clean"),
+    ],
+)
+def test_header_decoder(expected_value, raw_value):
+    assert HTTPHandler()._header_decode(raw_value) == expected_value
+
+
+@pytest.mark.parametrize(
+    ["value"],
+    [
+        ("%C0%A0",),
+    ],
+)
+def test_header_decoder_fails_with_invalid_values(value):
+    with pytest.raises(UnicodeDecodeError):
+        HTTPHandler()._header_decode(value)
+
+
+@pytest.mark.parametrize(
+    "event, expected_output",
+    [
+        (
+            CloudEvent(**test_attributes, datacontenttype="text/plain"),
+            HTTPComponents(
+                headers={
+                    "ce-source": "https://example.com/event-producer",
+                    "ce-id": "b96267e2-87be-4f7a-b87c-82f64360d954",
+                    "ce-specversion": "1.0",
+                    "ce-time": "2022-07-16T12:03:20.519216+04:00",
+                    "ce-type": "com.example.string",
+                    "content-type": "text/plain",
+                },
+                body=None,
+            ),
+        ),
+        (
+            SomeEvent(**test_attributes, datacontenttype="text/plain"),
+            HTTPComponents(
+                headers={
+                    "ce-source": "https://example.com/event-producer",
+                    "ce-id": "b96267e2-87be-4f7a-b87c-82f64360d954",
+                    "ce-specversion": "1.0",
+                    "ce-time": "2022-07-16T12:03:20.519216+04:00",
+                    "ce-some_attr": "some_value",
+                    "ce-type": "com.example.string",
+                    "content-type": "text/plain",
+                },
+                body=None,
+            ),
+        ),
+    ],
+)
+def test_to_binary(event, expected_output):
+    handler = HTTPHandler()
+
+    result = handler.to_binary(event)
+    assert result == expected_output
+
+
+def test_to_binary_fails_without_datacontenttype():
+    event = CloudEvent(**test_attributes, datacontenttype=None)
+    handler = HTTPHandler()
+
+    with pytest.raises(ValueError):
+        handler.to_binary(event)
+
+
+def test_from_binary():
+    handler = HTTPHandler()
+
+    headers = {
+        "ce-source": "https://example.com/event-producer",
+        "ce-id": "b96267e2-87be-4f7a-b87c-82f64360d954",
+        "ce-specversion": "1.0",
+        "ce-time": "2022-07-16T12:03:20.519216+04:00",
+        "ce-type": "com.example.string",
+        "content-type": "text/plain",
+    }
+    body = None
+
+    result = handler.from_binary(headers, body)
+    assert result == CloudEvent(**test_attributes, datacontenttype="text/plain")
+
+
+def test_fo_binary_fails_without_content_type():
+    handler = HTTPHandler()
+
+    headers = {
+        "ce-source": "https://example.com/event-producer",
+        "ce-id": "b96267e2-87be-4f7a-b87c-82f64360d954",
+        "ce-specversion": "1.0",
+        "ce-time": "2022-07-16T12:03:20.519216+04:00",
+        "ce-type": "com.example.string",
+    }
+    body = None
+
+    with pytest.raises(ValueError):
+        handler.from_binary(headers, body)
