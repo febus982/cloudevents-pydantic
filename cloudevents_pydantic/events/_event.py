@@ -46,8 +46,15 @@ from .fields.metadata import (
     FieldTime,
     FieldType,
 )
-from .fields.types import URI, Binary, DateTime, SpecVersion, String, URIReference
-from .fields.types._canonic_types import MimeType
+from .fields.types import (
+    URI,
+    Binary,
+    DateTime,
+    MimeType,
+    SpecVersion,
+    String,
+    URIReference,
+)
 
 DEFAULT_SPECVERSION = SpecVersion.v1_0
 

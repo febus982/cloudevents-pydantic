@@ -27,6 +27,7 @@ from ._canonic_types import (
     Boolean,
     DateTime,
     Integer,
+    MimeType,
     SpecVersion,
     String,
     URIReference,
