@@ -38,6 +38,24 @@ def bool_serializer(value: bool) -> str:
     return str(value).lower()
 
 
+bool_validation_mapping = {
+    "true": True,
+    True: True,
+    "false": False,
+    False: False,
+}
+
+
+def bool_validator(value: Union[str, bool]) -> bool:
+    if not isinstance(value, (str, bool)):
+        raise ValueError(f"Value {value} is not a valid boolean value")
+
+    try:
+        return bool_validation_mapping[value]
+    except KeyError:
+        raise ValueError(f"Value {value} is not a valid boolean value")
+
+
 def binary_serializer(value: bytes) -> str:
     return base64.b64encode(value).decode()
 
@@ -132,8 +150,11 @@ https://www.iana.org/assignments/media-types/media-types.xhtml
 """
 
 
-# TODO: Add types docstrings
-Boolean = Annotated[bool, PlainSerializer(bool_serializer)]
+Boolean = Annotated[
+    bool,
+    PlainSerializer(bool_serializer),
+    PlainValidator(bool_validator),
+]
 """
 A boolean value of "true" or "false"
 """
