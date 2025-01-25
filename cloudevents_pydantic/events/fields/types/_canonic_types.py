@@ -198,7 +198,7 @@ URIReference = Annotated[
 Uniform resource identifier reference
 """
 
-DateTime = Annotated[datetime, PlainSerializer(time_serializer)]
+Timestamp = Annotated[datetime, PlainSerializer(time_serializer)]
 """
 Date and time expression using the Gregorian Calendar
 """

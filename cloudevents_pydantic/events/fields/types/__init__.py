@@ -25,10 +25,10 @@ from ._canonic_types import (
     URI,
     Binary,
     Boolean,
-    DateTime,
     Integer,
     MimeType,
     SpecVersion,
     String,
+    Timestamp,
     URIReference,
 )

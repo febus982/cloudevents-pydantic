@@ -49,10 +49,10 @@ from .fields.metadata import (
 from .fields.types import (
     URI,
     Binary,
-    DateTime,
     MimeType,
     SpecVersion,
     String,
+    Timestamp,
     URIReference,
 )
 
@@ -104,7 +104,7 @@ class CloudEvent(BaseModel):  # type: ignore
     specversion: Annotated[SpecVersion, FieldSpecVersion]
 
     # Optional fields
-    time: Annotated[Optional[DateTime], Field(default=None), FieldTime]
+    time: Annotated[Optional[Timestamp], Field(default=None), FieldTime]
     subject: Annotated[Optional[String], Field(default=None), FieldSubject]
     datacontenttype: Annotated[
         Optional[MimeType], Field(default=None), FieldDataContentType
