@@ -1,5 +1,5 @@
 # ==============================================================================
-#  Copyright (c) 2024 Federico Busetti                                         =
+#  Copyright (c) 2025 Federico Busetti                                         =
 #  <729029+febus982@users.noreply.github.com>                                  =
 #                                                                              =
 #  Permission is hereby granted, free of charge, to any person obtaining a     =
@@ -20,15 +20,61 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
+import pytest
+from pydantic import BaseModel, ValidationError
 
-from ._canonic_types import (
-    URI,
-    Binary,
-    Boolean,
-    Integer,
-    MimeType,
-    SpecVersion,
-    String,
-    Timestamp,
-    URIReference,
+from cloudevents_pydantic.events.fields.types import Boolean
+
+
+@pytest.mark.parametrize(
+    ["input", "serialized_output"],
+    (
+        (True, "true"),
+        ("true", "true"),
+        (False, "false"),
+        ("false", "false"),
+    ),
 )
+def test_bool_serialization(input, serialized_output):
+    class BoolModel(BaseModel):
+        value: Boolean
+
+    m = BoolModel(value=input)
+
+    assert m.model_dump() == {"value": serialized_output}
+    assert m.model_dump_json() == '{"value":"' + serialized_output + '"}'
+    assert isinstance(m.model_dump()["value"], str)
+
+
+@pytest.mark.parametrize(
+    ["input", "validated_input"],
+    (
+        ("true", True),
+        (True, True),
+        ("false", False),
+        (False, False),
+    ),
+)
+def test_bool_validation(input, validated_input):
+    class BoolModel(BaseModel):
+        value: Boolean
+
+    assert isinstance(BoolModel(value=input).value, bool)
+    assert BoolModel(value=input).value is validated_input
+
+
+@pytest.mark.parametrize(
+    ["input"],
+    (
+        (1,),
+        ("1",),
+        ("True",),
+        ("non_boolean",),
+    ),
+)
+def test_bool_validation_fails_with_invalid_input(input):
+    class BoolModel(BaseModel):
+        value: Boolean
+
+    with pytest.raises(ValidationError):
+        BoolModel(value=input)

@@ -38,8 +38,30 @@ def bool_serializer(value: bool) -> str:
     return str(value).lower()
 
 
+bool_validation_mapping = {
+    "true": True,
+    True: True,
+    "false": False,
+    False: False,
+}
+
+
+def bool_validator(value: Union[str, bool]) -> bool:
+    if not isinstance(value, (str, bool)):
+        raise ValueError(f"Value {value} is not a valid boolean value")
+
+    try:
+        return bool_validation_mapping[value]
+    except KeyError:
+        raise ValueError(f"Value {value} is not a valid boolean value")
+
+
 def binary_serializer(value: bytes) -> str:
     return base64.b64encode(value).decode()
+
+
+def time_serializer(value: datetime) -> str:
+    return value.isoformat()
 
 
 def binary_validator(value: Union[str, bytes, bytearray, memoryview]) -> bytes:
@@ -117,9 +139,22 @@ str_constraint_asyncapi_compat = (
     r"^" r"[^" + class_control + class_nonchar_utf16_range + r"]+" r"$"
 )
 
+str_constraint_mime_type = (
+    r"^"
+    r"(application|audio|example|font|haptics|image|message|model|multipart|text|video)"
+    r"/"
+)
+"""
+Simplified validation regex for mime types. Uses registries defined on
+https://www.iana.org/assignments/media-types/media-types.xhtml
+"""
 
-# TODO: Add types docstrings
-Boolean = Annotated[bool, PlainSerializer(bool_serializer)]
+
+Boolean = Annotated[
+    bool,
+    PlainSerializer(bool_serializer),
+    PlainValidator(bool_validator),
+]
 """
 A boolean value of "true" or "false"
 """
@@ -130,6 +165,11 @@ A whole number in the range -2,147,483,648 to +2,147,483,647 inclusive
 """
 
 String = Annotated[str, StringConstraints(pattern=str_constraint_asyncapi_compat)]
+"""
+Sequence of allowable Unicode characters
+"""
+
+MimeType = Annotated[str, StringConstraints(pattern=str_constraint_mime_type)]
 """
 Sequence of allowable Unicode characters
 """
@@ -158,7 +198,7 @@ URIReference = Annotated[
 Uniform resource identifier reference
 """
 
-DateTime = datetime
+Timestamp = Annotated[datetime, PlainSerializer(time_serializer)]
 """
 Date and time expression using the Gregorian Calendar
 """

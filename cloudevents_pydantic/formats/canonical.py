@@ -1,5 +1,5 @@
 # ==============================================================================
-#  Copyright (c) 2024 Federico Busetti                                         =
+#  Copyright (c) 2025 Federico Busetti                                         =
 #  <729029+febus982@users.noreply.github.com>                                  =
 #                                                                              =
 #  Permission is hereby granted, free of charge, to any person obtaining a     =
@@ -20,74 +20,73 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
-from typing import List, TypeVar
+from typing import Dict, List, TypeVar
 
 from pydantic import TypeAdapter
 
-from ..events import CloudEvent
+from cloudevents_pydantic.events import CloudEvent
 
 _T = TypeVar("_T", bound=CloudEvent)
 
 
-def serialize(event: CloudEvent) -> str:
+def serialize(event: CloudEvent) -> Dict[str, str]:
     """
-    Serializes an event in JSON format.
+    Serializes an event to a dictionary with canonical values representations.
 
     :param event: The event object to serialize
     :type event: CloudEvent
     :return: The headers and the body representation of the event
-    :rtype: str
+    :rtype: Dict[str, str]
     """
-    # It seems that TypeAdapter is slightly faster than using the event,
-    # maybe we should replace this...
-    return event.model_dump_json()
+    return event.model_dump()
 
 
 def deserialize(
-    data: str, event_adapter: TypeAdapter[_T] = TypeAdapter(CloudEvent)
+    data: Dict[str, str], event_adapter: TypeAdapter[_T] = TypeAdapter(CloudEvent)
 ) -> _T:
     """
-    Deserializes an event from JSON format.
+    Deserializes an event from a dictionary with canonical values representations.
 
-    :param data: the JSON representation of the event
-    :type data: str
+    :param data: the canonical dictionary representation of the event
+    :type data: Dict[str, str]
     :param event_adapter: The event class to build
     :type event_adapter: Type[CloudEvent]
     :return: The deserialized event
     :rtype: CloudEvent
     """
-    return event_adapter.validate_json(data)
+    return event_adapter.validate_python(data)
 
 
 def serialize_batch(
     events: List[_T],
     batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),
-) -> str:
+) -> List[Dict[str, str]]:
     """
-    Serializes a list of events in JSON batch format.
+    Serializes a list of events to dictionaries with canonical values representations.
 
     :param events: The event object to serialize
     :type events: List[CloudEvent]
     :param batch_adapter: The pydantic TypeAdapter to use
     :type: TypeAdapter[List[CloudEvent]]
     :return: The serialized event batch
-    :rtype: str
+    :rtype: List[Dict[str, str]]
     """
-    return batch_adapter.dump_json(events).decode()
+    return batch_adapter.dump_python(events)
 
 
 def deserialize_batch(
-    data: str,
+    data: List[Dict[str, str]],
     batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),
 ) -> List[_T]:
     """
-    Deserializes a list of events from JSON batch format.
+    Deserializes a list of events from a list of dictionaries with
+    canonical values representations.
 
-    :param data: The JSON representation of the event batch
-    :type data: str
+    :param data: the list of canonical dictionary representations of the events
+    :type data: List[Dict[str, str]]
     :param batch_adapter: The pydantic TypeAdapter to use
     :type: TypeAdapter[List[CloudEvent]]
     :return: The deserialized event batch
     :rtype: List[CloudEvent]
     """
-    return batch_adapter.validate_json(data)
+    return batch_adapter.validate_python(data)

@@ -10,7 +10,7 @@ readme = "README.md"
 packages = [{include = "cloudevents_pydantic"}]
 #keywords = ["add", "keywords", "here"]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 4 - Beta",
     "Framework :: Pydantic",
     "Framework :: Pydantic :: 2",
     "Intended Audience :: Developers",
@@ -27,6 +27,9 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Typing :: Typed"
 ]
+
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"
 
 [tool.poetry-dynamic-versioning]
 enable = true
@@ -58,6 +61,7 @@ mkdocs-gen-files = ">=0.5.0"
 mkdocs-material = ">=9.1.16"
 mike = ">=2.0.0"
 mypy = ">=0.990"
+poetry-plugin-export = "^1.9.0"
 pymdown-extensions = ">=10.0.1"
 pytest = "^8.0.0"
 pytest-cov = ">=4.0.0"

@@ -1,5 +1,5 @@
 # ==============================================================================
-#  Copyright (c) 2024 Federico Busetti                                         =
+#  Copyright (c) 2025 Federico Busetti                                         =
 #  <729029+febus982@users.noreply.github.com>                                  =
 #                                                                              =
 #  Permission is hereby granted, free of charge, to any person obtaining a     =
@@ -20,15 +20,64 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
+import pytest
+from pydantic import BaseModel, ValidationError
 
-from ._canonic_types import (
-    URI,
-    Binary,
-    Boolean,
-    Integer,
-    MimeType,
-    SpecVersion,
-    String,
-    Timestamp,
-    URIReference,
+from cloudevents_pydantic.events.fields.types import MimeType
+
+
+@pytest.mark.parametrize(
+    ["valid_mime_type"],
+    (
+        ("application/something",),
+        ("audio/something",),
+        ("example/something",),
+        ("font/something",),
+        ("haptics/something",),
+        ("image/something",),
+        ("message/something",),
+        ("model/something",),
+        ("multipart/something",),
+        ("text/something",),
+        ("video/something",),
+    ),
 )
+def test_validation_valid_mime(valid_mime_type):
+    class MimeModel(BaseModel):
+        value: MimeType
+
+    MimeModel(value=valid_mime_type)
+
+
+def test_validation_invalid_mime():
+    class MimeModel(BaseModel):
+        value: MimeType
+
+    with pytest.raises(ValidationError):
+        MimeModel(value="not-a-mime-type")
+
+
+@pytest.mark.parametrize(
+    ["valid_mime_type"],
+    (
+        ("application/something",),
+        ("audio/something",),
+        ("example/something",),
+        ("font/something",),
+        ("haptics/something",),
+        ("image/something",),
+        ("message/something",),
+        ("model/something",),
+        ("multipart/something",),
+        ("text/something",),
+        ("video/something",),
+    ),
+)
+def test_serialization_valid_mime(valid_mime_type):
+    class MimeModel(BaseModel):
+        value: MimeType
+
+    m = MimeModel(value=valid_mime_type)
+    assert m.model_dump() == {"value": valid_mime_type}
+    assert m.model_dump_json() == '{"value":"' + valid_mime_type + '"}'
+    assert isinstance(m.model_dump()["value"], str)

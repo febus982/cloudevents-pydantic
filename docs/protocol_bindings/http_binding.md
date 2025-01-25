@@ -42,7 +42,7 @@ for the event class, to handle efficiently event serialization and discriminated
 an expensive operation. Check the [Pydantic documentation](https://docs.pydantic.dev/latest/concepts/performance/#typeadapter-instantiated-once) about this.
 ///
 
-## Deserialize a JSON event
+## Deserialize an event
 
 HTTP deserialization parses the body to reconstruct the event.
 
@@ -59,32 +59,30 @@ batch_event_json = '[{"data":null,"source":"https://example.com/event-producer",
 
 http_handler = HTTPHandler(OrderCreated)
 
-# Single event
+# Single JSON event
 event = http_handler.from_json(single_event_json)
-# Batch (list) of events
+# JSON batch (list) of events
 batch_of_events = http_handler.from_json_batch(batch_event_json)
+# HTTP Binary event (using the raw request headers and body)
+event = http_handler.from_binary(headers={}, body="body")
 ```
 ///
 
 /// tab | CloudEvent class
 ```python
-from cloudevents_pydantic.events import CloudEvent
 from cloudevents_pydantic.bindings.http import HTTPHandler
 
-minimal_attributes = {
-    "type": "order_created",
-    "source": "https://example.com/event-producer",
-    "id": "b96267e2-87be-4f7a-b87c-82f64360d954",
-    "specversion": "1.0",
-}
+single_event_json = '{"data":null,"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
+batch_event_json = '[{"data":null,"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}]'
 
 http_handler = HTTPHandler()
-event = CloudEvent.event_factory(**minimal_attributes)
 
-# Single event
-event = http_handler.to_json(event)
-# Batch (list) of events
-batch_of_events = http_handler.to_json_batch([event])
+# Single JSON event
+event = http_handler.from_json(single_event_json)
+# JSON batch (list) of events
+batch_of_events = http_handler.from_json_batch(batch_event_json)
+# HTTP Binary event (using the raw request headers and body)
+event = http_handler.from_binary(headers={}, body="body")
 ```
 ///
 
@@ -173,7 +171,7 @@ work around some FastAPI limitations and manually specify some of the needed dat
 You can find a detailed example [here](https://github.com/febus982/bootstrap-python-fastapi/blob/main/src/http_app/routes/events.py).
 ///
 
-## Serialize a JSON event
+## Serialize an event
 
 HTTP serialization returns header and body to be used in a HTTP request.
 
@@ -199,6 +197,8 @@ event = OrderCreated.event_factory(**minimal_attributes)
 headers, body = http_handler.to_json(event)
 # Batch (list) of events
 headers, body = http_handler.to_json_batch([event])
+# HTTP Binary event
+headers, body = http_handler.to_json(event)
 ```
 ///
 
@@ -218,8 +218,10 @@ http_handler = HTTPHandler()
 event = CloudEvent.event_factory(**minimal_attributes)
 
 # Single event
-json_string = http_handler.to_json(event)
+headers, body = http_handler.to_json(event)
 # Batch (list) of events
-json_batch_string = http_handler.to_json_batch([event])
+headers, body = http_handler.to_json_batch([event])
+# HTTP Binary event
+headers, body = http_handler.to_json(event)
 ```
 ///

@@ -63,14 +63,15 @@ def json_deserialization_official_sdk_cloudevent():
     from_json_http(valid_json)
 
 
+print("==== 1M iterations benchmark ====")
 print("Timings for HTTP JSON deserialization:")
 print("This package: " + str(timeit(json_deserialization, number=test_iterations)))
 print(
-    "Official SDK with pydantic model: "
+    "Official SDK using pydantic model: "
     + str(timeit(json_deserialization_official_sdk_pydantic, number=test_iterations))
 )
 print(
-    "Official SDK with http model: "
+    "Official SDK using http model: "
     + str(timeit(json_deserialization_official_sdk_cloudevent, number=test_iterations))
 )
 
@@ -101,10 +102,10 @@ print("")
 print("Timings for HTTP JSON serialization:")
 print("This package: " + str(timeit(json_serialization, number=test_iterations)))
 print(
-    "Official SDK with pydantic model: "
+    "Official SDK using pydantic model: "
     + str(timeit(json_serialization_official_sdk_pydantic, number=test_iterations))
 )
 print(
-    "Official SDK with http model: "
+    "Official SDK using http model: "
     + str(timeit(json_serialization_official_sdk_cloudevent, number=test_iterations))
 )
