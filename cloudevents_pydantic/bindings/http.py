@@ -150,9 +150,9 @@ class HTTPHandler(Generic[_T]):
         """
         Deserializes an event from HTTP binary format.
 
-        :param headers: the request headers
+        :param headers: The request headers
         :type headers: Dict[str, str]
-        :param body: The data representation of the event
+        :param body: The request body
         :type body: Any
         :return:
         """
