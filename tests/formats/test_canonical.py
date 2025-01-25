@@ -21,14 +21,19 @@
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
 import datetime
-from typing import Any, Dict
+from typing import Dict
 from urllib.parse import ParseResult
 
 from cloudevents_pydantic.events import CloudEvent
 from cloudevents_pydantic.events.fields.types import SpecVersion
-from cloudevents_pydantic.formats.canonical import deserialize, serialize
+from cloudevents_pydantic.formats.canonical import (
+    deserialize,
+    deserialize_batch,
+    serialize,
+    serialize_batch,
+)
 
-test_attributes: Dict[str, Any] = {
+test_attributes: Dict[str, str] = {
     "type": "com.example.string",
     "source": "https://example.com/event-producer",
     "id": "b96267e2-87be-4f7a-b87c-82f64360d954",
@@ -50,6 +55,50 @@ def test_canonical_serialization():
 
 def test_canonical_deserialization():
     event = deserialize(test_attributes)
+    assert event == test_event
+    assert event.type == "com.example.string"
+    assert event.source == ParseResult(
+        scheme="https",
+        netloc="example.com",
+        path="/event-producer",
+        params="",
+        query="",
+        fragment="",
+    )
+    assert event.data == "some_data"
+    assert event.id == "b96267e2-87be-4f7a-b87c-82f64360d954"
+    assert event.specversion is SpecVersion.v1_0
+    assert event.time == datetime.datetime(
+        year=2022,
+        month=7,
+        day=16,
+        hour=12,
+        minute=3,
+        second=20,
+        microsecond=519216,
+        tzinfo=datetime.timezone(datetime.timedelta(hours=4)),
+    )
+    assert event.subject == "some_subject"
+    assert event.datacontenttype == "text/plain;charset=utf-8"
+    assert event.dataschema == ParseResult(
+        scheme="https",
+        netloc="example.com",
+        path="/event-schema",
+        params="",
+        query="",
+        fragment="",
+    )
+
+
+def test_canonical_batch_serialization():
+    assert serialize_batch([test_event]) == [test_attributes]
+
+
+def test_canonical_batch_deserialization():
+    events = deserialize_batch([test_attributes])
+    assert events == [test_event]
+    event = events[0]
+
     assert event == test_event
     assert event.type == "com.example.string"
     assert event.source == ParseResult(
