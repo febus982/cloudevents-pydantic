@@ -54,4 +54,4 @@ def deserialize(
     :return: The deserialized event
     :rtype: CloudEvent
     """
-    return event_adapter.validate_strings(data)
+    return event_adapter.validate_python(data)
