@@ -82,3 +82,21 @@ def test_data_base64_input_is_accepted_only_from_json():
 
     event = CloudEvent.model_validate_json(json_string)
     assert event.data == b"test"
+
+
+@pytest.mark.parametrize(["attribute"], [
+    ("source",),
+    ("id",),
+    ("type",),
+    ("specversion",),
+])
+def test_fails_if_mandatory_fields_are_not_present(attribute):
+    temp_attrs = test_full_attributes.copy()
+
+    del temp_attrs[attribute]
+
+    with pytest.raises(ValidationError):
+        CloudEvent.model_validate(temp_attrs)
+
+    with pytest.raises(ValidationError):
+        CloudEvent.model_validate_json(json.dumps(temp_attrs))
