@@ -58,7 +58,8 @@ from cloudevents_pydantic.events.fields.types import Timestamp
                 minute=3,
                 second=20,
                 microsecond=519216,
-                tzinfo=datetime.UTC,
+                # UTC time zone
+                tzinfo=datetime.timezone(datetime.timedelta(0)),
             ),
             "2020-07-16T12:03:20.519216+00:00",
         ),
