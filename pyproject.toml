@@ -10,7 +10,7 @@ readme = "README.md"
 packages = [{include = "cloudevents_pydantic"}]
 #keywords = ["add", "keywords", "here"]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 4 - Beta",
     "Framework :: Pydantic",
     "Framework :: Pydantic :: 2",
     "Intended Audience :: Developers",

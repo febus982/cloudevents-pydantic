@@ -2,7 +2,7 @@
 
 ![Static Badge](https://img.shields.io/badge/Python-3.9_%7C_3.10_%7C_3.11_%7C_3.12_%7C_3.13-blue?logo=python&logoColor=white)
 [![Stable Version](https://img.shields.io/pypi/v/cloudevents-pydantic?color=blue)](https://pypi.org/project/cloudevents-pydantic/)
-[![stability-wip](https://img.shields.io/badge/stability-wip-lightgrey.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#work-in-progress)
+[![stability-beta](https://img.shields.io/badge/stability-beta-33bbff.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#beta)
 
 [![Python tests](https://github.com/febus982/cloudevents-pydantic/actions/workflows/python-tests.yml/badge.svg?branch=main)](https://github.com/febus982/cloudevents-pydantic/actions/workflows/python-tests.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/c7fe3ebcadd850d7ed3f/maintainability)](https://codeclimate.com/github/febus982/cloudevents-pydantic/maintainability)
