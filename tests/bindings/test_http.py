@@ -209,11 +209,12 @@ def test_header_decoder_fails_with_invalid_values(value):
         ),
     ],
 )
-def test_to_binary(event, expected_output):
+def test_to_binary(event, expected_output, canonical_serialize_spy):
     handler = HTTPHandler()
 
     result = handler.to_binary(event)
     assert result == expected_output
+    canonical_serialize_spy.assert_called_once_with(event)
 
 
 def test_to_binary_fails_without_datacontenttype():
@@ -224,7 +225,7 @@ def test_to_binary_fails_without_datacontenttype():
         handler.to_binary(event)
 
 
-def test_from_binary():
+def test_from_binary(canonical_deserialize_spy):
     handler = HTTPHandler()
 
     headers = {
@@ -234,14 +235,29 @@ def test_from_binary():
         "ce-time": "2022-07-16T12:03:20.519216+04:00",
         "ce-type": "com.example.string",
         "content-type": "text/plain",
+        "x-ignored-header": "value",
     }
     body = None
 
     result = handler.from_binary(headers, body)
     assert result == CloudEvent(**test_attributes, datacontenttype="text/plain")
 
+    #
+    canonical_deserialize_spy.assert_called_once_with(
+        {
+            "source": "https://example.com/event-producer",
+            "id": "b96267e2-87be-4f7a-b87c-82f64360d954",
+            "specversion": "1.0",
+            "time": "2022-07-16T12:03:20.519216+04:00",
+            "type": "com.example.string",
+            "datacontenttype": "text/plain",
+            "data": None,
+        },
+        handler.event_adapter,
+    )
 
-def test_fo_binary_fails_without_content_type():
+
+def test_from_binary_fails_without_content_type():
     handler = HTTPHandler()
 
     headers = {
