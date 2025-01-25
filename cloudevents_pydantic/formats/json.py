@@ -29,7 +29,7 @@ from ..events import CloudEvent
 _T = TypeVar("_T", bound=CloudEvent)
 
 
-def to_json(event: CloudEvent) -> str:
+def serialize(event: CloudEvent) -> str:
     """
     Serializes an event in JSON format.
 
@@ -41,7 +41,7 @@ def to_json(event: CloudEvent) -> str:
     return event.model_dump_json()
 
 
-def from_json(
+def deserialize(
     data: str, event_adapter: TypeAdapter[_T] = TypeAdapter(CloudEvent)
 ) -> _T:
     """
@@ -57,7 +57,7 @@ def from_json(
     return event_adapter.validate_json(data)
 
 
-def to_json_batch(
+def serialize_batch(
     events: List[_T],
     batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),
 ) -> str:
@@ -74,7 +74,7 @@ def to_json_batch(
     return batch_adapter.dump_json(events).decode()
 
 
-def from_json_batch(
+def deserialize_batch(
     data: str,
     batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),
 ) -> List[_T]:

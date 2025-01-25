@@ -26,7 +26,7 @@ from urllib.parse import ParseResult
 
 from cloudevents_pydantic.events import CloudEvent
 from cloudevents_pydantic.events.fields.types import SpecVersion
-from cloudevents_pydantic.formats.canonical import from_canonical, to_canonical
+from cloudevents_pydantic.formats.canonical import deserialize, serialize
 
 test_attributes: Dict[str, Any] = {
     "type": "com.example.string",
@@ -45,11 +45,11 @@ test_event = CloudEvent(**test_attributes)
 
 
 def test_canonical_serialization():
-    assert to_canonical(test_event) == test_attributes
+    assert serialize(test_event) == test_attributes
 
 
 def test_canonical_deserialization():
-    event = from_canonical(test_attributes)
+    event = deserialize(test_attributes)
     assert event == test_event
     assert event.type == "com.example.string"
     assert event.source == ParseResult(

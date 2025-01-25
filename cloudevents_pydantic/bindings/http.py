@@ -78,7 +78,7 @@ class HTTPHandler(Generic[_T]):
         :rtype: HTTPComponents
         """
         headers = {"content-type": "application/cloudevents+json; charset=UTF-8"}
-        body = json.to_json(event)
+        body = json.serialize(event)
         return HTTPComponents(headers, body)
 
     def to_json_batch(self, events: List[_T]) -> HTTPComponents:
@@ -91,7 +91,7 @@ class HTTPHandler(Generic[_T]):
         :rtype: HTTPComponents
         """
         headers = {"content-type": "application/cloudevents-batch+json; charset=UTF-8"}
-        body = json.to_json_batch(events, self.batch_adapter)
+        body = json.serialize_batch(events, self.batch_adapter)
         return HTTPComponents(headers, body)
 
     def from_json(
@@ -106,7 +106,7 @@ class HTTPHandler(Generic[_T]):
         :return: The deserialized event
         :rtype: CloudEvent
         """
-        return json.from_json(body, self.event_adapter)
+        return json.deserialize(body, self.event_adapter)
 
     def from_json_batch(
         self,
@@ -120,7 +120,7 @@ class HTTPHandler(Generic[_T]):
         :return: The deserialized event batch
         :rtype: List[CloudEvent]
         """
-        return json.from_json_batch(body, self.batch_adapter)
+        return json.deserialize_batch(body, self.batch_adapter)
 
     def to_binary(self, event: _T) -> HTTPComponents:
         """
@@ -134,7 +134,7 @@ class HTTPHandler(Generic[_T]):
         if event.datacontenttype is None:
             raise ValueError("Can't serialize event without datacontenttype")
 
-        serialized = canonical.to_canonical(event)
+        serialized = canonical.serialize(event)
 
         body = serialized.get("data")
         headers = {
@@ -166,7 +166,7 @@ class HTTPHandler(Generic[_T]):
         }
         canonical_data["datacontenttype"] = self._header_decode(headers["content-type"])
         canonical_data["data"] = body
-        return canonical.from_canonical(canonical_data, self.event_adapter)
+        return canonical.deserialize(canonical_data, self.event_adapter)
 
     def _header_encode(self, value: str) -> str:
         return quote(value, safe=_HTTP_safe_chars)

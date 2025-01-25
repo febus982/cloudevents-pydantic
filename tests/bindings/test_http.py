@@ -65,34 +65,34 @@ def type_adapter_init_mock():
 
 @pytest.fixture
 def to_json_spy():
-    f = json.to_json
-    with patch("cloudevents_pydantic.formats.json.to_json", wraps=f) as mocked_function:
+    f = json.serialize
+    with patch("cloudevents_pydantic.formats.json.serialize", wraps=f) as mocked_function:
         yield mocked_function
 
 
 @pytest.fixture
 def to_json_batch_spy():
-    f = json.to_json_batch
+    f = json.serialize_batch
     with patch(
-        "cloudevents_pydantic.formats.json.to_json_batch", wraps=f
+        "cloudevents_pydantic.formats.json.serialize_batch", wraps=f
     ) as mocked_function:
         yield mocked_function
 
 
 @pytest.fixture
 def from_json_spy():
-    f = json.from_json
+    f = json.deserialize
     with patch(
-        "cloudevents_pydantic.formats.json.from_json", wraps=f
+        "cloudevents_pydantic.formats.json.deserialize", wraps=f
     ) as mocked_function:
         yield mocked_function
 
 
 @pytest.fixture
 def from_json_batch_spy():
-    f = json.from_json_batch
+    f = json.deserialize_batch
     with patch(
-        "cloudevents_pydantic.formats.json.from_json_batch", wraps=f
+        "cloudevents_pydantic.formats.json.deserialize_batch", wraps=f
     ) as mocked_function:
         yield mocked_function
 

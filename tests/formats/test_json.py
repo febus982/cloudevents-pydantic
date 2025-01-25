@@ -34,10 +34,10 @@ from typing_extensions import TypedDict
 from cloudevents_pydantic.events import CloudEvent
 from cloudevents_pydantic.events.fields.types import Binary, SpecVersion
 from cloudevents_pydantic.formats.json import (
-    from_json,
-    from_json_batch,
-    to_json,
-    to_json_batch,
+    deserialize,
+    deserialize_batch,
+    serialize,
+    serialize_batch,
 )
 
 minimal_attributes = {
@@ -65,7 +65,7 @@ with open(
 
 
 def test_from_json():
-    event = from_json(valid_json)
+    event = deserialize(valid_json)
 
     assert event.type == "com.example.string"
     assert event.source == ParseResult(
@@ -187,20 +187,20 @@ def test_from_json_and_from_json_batch_fail_if_mandatory_field_null_or_missing(
     json_input,
 ):
     with pytest.raises(ValidationError):
-        from_json(json_input)
+        deserialize(json_input)
 
     with pytest.raises(ValidationError):
-        from_json_batch(json_input)
+        deserialize_batch(json_input)
 
 
 def test_from_json_and_from_json_batch_successful_with_minimal_required_attrs():
     json_input = json.dumps(minimal_attributes)
-    from_json(json_input)
-    from_json_batch("[" + json_input + "]")
+    deserialize(json_input)
+    deserialize_batch("[" + json_input + "]")
 
 
 def test_from_json_batch():
-    events = from_json_batch(valid_json_batch)
+    events = deserialize_batch(valid_json_batch)
     assert isinstance(events, list)
     assert len(events) == 1
 
@@ -234,14 +234,14 @@ def test_from_json_batch():
 
 def test_to_json():
     event = CloudEvent.event_factory(**test_attributes)
-    json_repr = to_json(event)
+    json_repr = serialize(event)
     assert json_repr == valid_json
     validate(json.loads(json_repr), cloudevent_schema)
 
 
 def test_to_json_batch():
     event = CloudEvent.event_factory(**test_attributes)
-    json_repr = to_json_batch([event])
+    json_repr = serialize_batch([event])
     assert json.loads(json_repr) == json.loads(valid_json_batch)
     validate(json.loads(json_repr)[0], cloudevent_schema)
 
@@ -266,7 +266,7 @@ def test_to_json_base64_with_any_type(
     event = CloudEvent.event_factory(**test_attributes)
     event.data = data
 
-    json_repr = to_json_batch([event]) if batch else to_json(event)
+    json_repr = serialize_batch([event]) if batch else serialize(event)
     parsed_json = json.loads(json_repr)
     if batch:
         parsed_json = parsed_json[0]
@@ -302,9 +302,9 @@ def test_from_json_base64_with_any_type(
     )
 
     if batch:
-        event = from_json_batch("[" + json_string + "]")[0]
+        event = deserialize_batch("[" + json_string + "]")[0]
     else:
-        event = from_json(json_string)
+        event = deserialize(json_string)
     assert event.data == expected_value
 
 
@@ -331,7 +331,7 @@ def test_to_json_base64_with_binary_type(
     input_attrs["data"] = data
     event = BinaryDataEvent.event_factory(**input_attrs)
 
-    json_repr = to_json_batch([event]) if batch else to_json(event)
+    json_repr = serialize_batch([event]) if batch else serialize(event)
     parsed_json = json.loads(json_repr)
     if batch:
         parsed_json = parsed_json[0]
@@ -370,12 +370,12 @@ def test_from_json_base64_with_binary_type(
     )
 
     if batch:
-        event = from_json_batch(
+        event = deserialize_batch(
             "[" + json_string + "]",
             batch_adapter=TypeAdapter(Sequence[BinaryDataEvent]),
         )[0]
     else:
-        event = from_json(json_string, TypeAdapter(BinaryDataEvent))
+        event = deserialize(json_string, TypeAdapter(BinaryDataEvent))
     assert event.data == expected_value
     assert isinstance(event, BinaryDataEvent)
 
@@ -396,8 +396,8 @@ def test_nested_binary_fields_correctly_serialized():
     }
     event = BinaryNestedEvent.event_factory(**input_attrs)
     assert (
-        to_json(event)
-        == '{"data":{"data":"AgMFBw==","test":"test"},"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
+            serialize(event)
+            == '{"data":{"data":"AgMFBw==","test":"test"},"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
     )
 
 
@@ -412,5 +412,5 @@ def test_nested_binary_fields_correctly_deserialized():
     class BinaryNestedEvent(CloudEvent):
         data: SomeData
 
-    event: BinaryNestedEvent = from_json(json_input, TypeAdapter(BinaryNestedEvent))
+    event: BinaryNestedEvent = deserialize(json_input, TypeAdapter(BinaryNestedEvent))
     assert event.data["data"] == b"\x02\x03\x05\x07"

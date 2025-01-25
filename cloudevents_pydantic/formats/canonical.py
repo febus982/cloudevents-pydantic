@@ -29,9 +29,9 @@ from cloudevents_pydantic.events import CloudEvent
 _T = TypeVar("_T", bound=CloudEvent)
 
 
-def to_canonical(event: CloudEvent) -> dict:
+def serialize(event: CloudEvent) -> dict:
     """
-    Serializes an event in JSON format.
+    Serializes an event in canonical format.
 
     :param event: The event object to serialize
     :type event: CloudEvent
@@ -41,11 +41,11 @@ def to_canonical(event: CloudEvent) -> dict:
     return event.model_dump()
 
 
-def from_canonical(
+def deserialize(
     data: dict, event_adapter: TypeAdapter[_T] = TypeAdapter(CloudEvent)
 ) -> _T:
     """
-    Deserializes an event from canical format.
+    Deserializes an event from canonical format.
 
     :param data: the JSON representation of the event
     :type data: str
