@@ -28,7 +28,6 @@ from pydantic import Field, TypeAdapter
 
 from cloudevents_pydantic.bindings.http import HTTPComponents, HTTPHandler
 from cloudevents_pydantic.events import CloudEvent
-from cloudevents_pydantic.formats import json
 
 minimal_attributes = {
     "type": "com.example.string",
@@ -63,42 +62,6 @@ def type_adapter_init_mock():
         yield mocked_function
 
 
-@pytest.fixture
-def to_json_spy():
-    f = json.serialize
-    with patch(
-        "cloudevents_pydantic.formats.json.serialize", wraps=f
-    ) as mocked_function:
-        yield mocked_function
-
-
-@pytest.fixture
-def to_json_batch_spy():
-    f = json.serialize_batch
-    with patch(
-        "cloudevents_pydantic.formats.json.serialize_batch", wraps=f
-    ) as mocked_function:
-        yield mocked_function
-
-
-@pytest.fixture
-def from_json_spy():
-    f = json.deserialize
-    with patch(
-        "cloudevents_pydantic.formats.json.deserialize", wraps=f
-    ) as mocked_function:
-        yield mocked_function
-
-
-@pytest.fixture
-def from_json_batch_spy():
-    f = json.deserialize_batch
-    with patch(
-        "cloudevents_pydantic.formats.json.deserialize_batch", wraps=f
-    ) as mocked_function:
-        yield mocked_function
-
-
 def test_initialization_defaults_to_cloudevents(type_adapter_init_mock: MagicMock):
     HTTPHandler()
     type_adapter_init_mock.assert_has_calls(
@@ -126,11 +89,11 @@ def test_initialization_uses_provided_event_class(type_adapter_init_mock: MagicM
         (SomeEvent(**test_attributes), some_event_json),
     ],
 )
-def test_to_json(event, expected_output, to_json_spy):
+def test_to_json(event, expected_output, json_serialize_spy):
     handler = HTTPHandler()
 
     headers, json_repr = handler.to_json(event)
-    to_json_spy.assert_called_once_with(event)
+    json_serialize_spy.assert_called_once_with(event)
     assert json_repr == expected_output
 
 
@@ -141,31 +104,33 @@ def test_to_json(event, expected_output, to_json_spy):
         (SomeEvent(**test_attributes), some_event_json_batch),
     ],
 )
-def test_to_json_batch(event, expected_output, to_json_batch_spy):
+def test_to_json_batch(event, expected_output, json_serialize_batch_spy):
     handler = HTTPHandler()
 
     headers, json_repr = handler.to_json_batch([event])
-    to_json_batch_spy.assert_called_once_with([event], handler.batch_adapter)
+    json_serialize_batch_spy.assert_called_once_with([event], handler.batch_adapter)
     assert json_repr == expected_output
 
 
-def test_from_json(from_json_spy):
+def test_from_json(json_deserialize_spy):
     handler = HTTPHandler(event_class=SomeEvent)
     event = handler.from_json(valid_json)
 
-    from_json_spy.assert_called_once_with(valid_json, handler.event_adapter)
+    json_deserialize_spy.assert_called_once_with(valid_json, handler.event_adapter)
     assert event == SomeEvent(**test_attributes)
     assert event != CloudEvent(**test_attributes)
     assert isinstance(event, SomeEvent)
 
 
-def test_from_json_batch(from_json_batch_spy):
+def test_from_json_batch(json_deserialize_batch_spy):
     handler = HTTPHandler(event_class=SomeEvent)
     events = handler.from_json_batch(valid_json_batch)
     event = events[0]
 
     assert len(events) == 1
-    from_json_batch_spy.assert_called_once_with(valid_json_batch, handler.batch_adapter)
+    json_deserialize_batch_spy.assert_called_once_with(
+        valid_json_batch, handler.batch_adapter
+    )
     assert event == SomeEvent(**test_attributes)
     assert event != CloudEvent(**test_attributes)
     assert isinstance(event, SomeEvent)
