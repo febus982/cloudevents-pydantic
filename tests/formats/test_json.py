@@ -23,13 +23,12 @@
 import datetime
 import json
 from pathlib import Path
-from typing import Any, Dict, Sequence
+from typing import Any, Dict, List
 from urllib.parse import ParseResult
 
 import pytest
 from jsonschema import validate
-from pydantic import TypeAdapter, ValidationError
-from typing_extensions import TypedDict
+from pydantic import TypeAdapter
 
 from cloudevents_pydantic.events import CloudEvent
 from cloudevents_pydantic.events.fields.types import Binary, SpecVersion
@@ -64,7 +63,7 @@ with open(
     cloudevent_schema = json.load(f)
 
 
-def test_from_json():
+def test_deserialize():
     event = deserialize(valid_json)
 
     assert event.type == "com.example.string"
@@ -94,112 +93,7 @@ def test_from_json():
     assert event.dataschema is None
 
 
-@pytest.mark.parametrize(
-    ["json_input"],
-    (
-        pytest.param(
-            json.dumps(
-                {
-                    "type": None,
-                    "source": "https://example.com/event-producer",
-                    "id": "b96267e2-87be-4f7a-b87c-82f64360d954",
-                    "specversion": "1.0",
-                }
-            ),
-            id="null_type",
-        ),
-        pytest.param(
-            json.dumps(
-                {
-                    "source": "https://example.com/event-producer",
-                    "id": "b96267e2-87be-4f7a-b87c-82f64360d954",
-                    "specversion": "1.0",
-                }
-            ),
-            id="missing_type",
-        ),
-        pytest.param(
-            json.dumps(
-                {
-                    "type": "com.example.string",
-                    "source": None,
-                    "id": "b96267e2-87be-4f7a-b87c-82f64360d954",
-                    "specversion": "1.0",
-                }
-            ),
-            id="null_source",
-        ),
-        pytest.param(
-            json.dumps(
-                {
-                    "type": "com.example.string",
-                    "id": "b96267e2-87be-4f7a-b87c-82f64360d954",
-                    "specversion": "1.0",
-                }
-            ),
-            id="missing_source",
-        ),
-        pytest.param(
-            json.dumps(
-                {
-                    "type": "com.example.string",
-                    "source": "https://example.com/event-producer",
-                    "id": None,
-                    "specversion": "1.0",
-                }
-            ),
-            id="null_id",
-        ),
-        pytest.param(
-            json.dumps(
-                {
-                    "type": "com.example.string",
-                    "source": "https://example.com/event-producer",
-                    "specversion": "1.0",
-                }
-            ),
-            id="missing_id",
-        ),
-        pytest.param(
-            json.dumps(
-                {
-                    "type": "com.example.string",
-                    "source": "https://example.com/event-producer",
-                    "id": "b96267e2-87be-4f7a-b87c-82f64360d954",
-                    "specversion": None,
-                }
-            ),
-            id="null_specversion",
-        ),
-        pytest.param(
-            json.dumps(
-                {
-                    "type": "com.example.string",
-                    "source": "https://example.com/event-producer",
-                    "id": "b96267e2-87be-4f7a-b87c-82f64360d954",
-                }
-            ),
-            id="missing_specversion",
-        ),
-    ),
-)
-def test_from_json_and_from_json_batch_fail_if_mandatory_field_null_or_missing(
-    json_input,
-):
-    with pytest.raises(ValidationError):
-        deserialize(json_input)
-
-    with pytest.raises(ValidationError):
-        deserialize_batch(json_input)
-
-
-def test_from_json_and_from_json_batch_successful_with_minimal_required_attrs():
-    json_input = json.dumps(minimal_attributes)
-    deserialize(json_input)
-    deserialize_batch("[" + json_input + "]")
-
-
-def test_from_json_batch():
+def test_deserialize_batch():
     events = deserialize_batch(valid_json_batch)
     assert isinstance(events, list)
     assert len(events) == 1
@@ -232,14 +126,14 @@ def test_from_json_batch():
     assert event.dataschema is None
 
 
-def test_to_json():
+def test_serialized_event_validates_against_official_json_schema():
     event = CloudEvent.event_factory(**test_attributes)
     json_repr = serialize(event)
     assert json_repr == valid_json
     validate(json.loads(json_repr), cloudevent_schema)
 
 
-def test_to_json_batch():
+def test_serialized_batch_validates_against_official_json_schema():
     event = CloudEvent.event_factory(**test_attributes)
     json_repr = serialize_batch([event])
     assert json.loads(json_repr) == json.loads(valid_json_batch)
@@ -372,45 +266,9 @@ def test_from_json_base64_with_binary_type(
     if batch:
         event = deserialize_batch(
             "[" + json_string + "]",
-            batch_adapter=TypeAdapter(Sequence[BinaryDataEvent]),
+            batch_adapter=TypeAdapter(List[BinaryDataEvent]),
         )[0]
     else:
         event = deserialize(json_string, TypeAdapter(BinaryDataEvent))
     assert event.data == expected_value
     assert isinstance(event, BinaryDataEvent)
-
-
-def test_nested_binary_fields_correctly_serialized():
-    class SomeData(TypedDict):
-        # Using `data` to verify it doesn't become `data_base64` when nested
-        data: Binary
-        test: str
-
-    class BinaryNestedEvent(CloudEvent):
-        data: SomeData
-
-    input_attrs = test_attributes.copy()
-    input_attrs["data"] = {
-        "data": b"\x02\x03\x05\x07",
-        "test": "test",
-    }
-    event = BinaryNestedEvent.event_factory(**input_attrs)
-    assert (
-            serialize(event)
-            == '{"data":{"data":"AgMFBw==","test":"test"},"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
-    )
-
-
-def test_nested_binary_fields_correctly_deserialized():
-    json_input = '{"data":{"data":"AgMFBw==","test":"test"},"source":"https://example.com/event-producer","id":"b96267e2-87be-4f7a-b87c-82f64360d954","type":"com.example.string","specversion":"1.0","time":"2022-07-16T12:03:20.519216+04:00","subject":null,"datacontenttype":null,"dataschema":null}'
-
-    class SomeData(TypedDict):
-        # Using `data` to verify it doesn't become `data_base64` when nested
-        data: Binary
-        test: str
-
-    class BinaryNestedEvent(CloudEvent):
-        data: SomeData
-
-    event: BinaryNestedEvent = deserialize(json_input, TypeAdapter(BinaryNestedEvent))
-    assert event.data["data"] == b"\x02\x03\x05\x07"

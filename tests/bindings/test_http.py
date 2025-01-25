@@ -66,7 +66,9 @@ def type_adapter_init_mock():
 @pytest.fixture
 def to_json_spy():
     f = json.serialize
-    with patch("cloudevents_pydantic.formats.json.serialize", wraps=f) as mocked_function:
+    with patch(
+        "cloudevents_pydantic.formats.json.serialize", wraps=f
+    ) as mocked_function:
         yield mocked_function
 
 

@@ -38,6 +38,8 @@ def serialize(event: CloudEvent) -> str:
     :return: The headers and the body representation of the event
     :rtype: str
     """
+    # It seems that TypeAdapter is slightly faster than using the event,
+    # maybe we should replace this...
     return event.model_dump_json()
 
 
