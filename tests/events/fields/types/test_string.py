@@ -1,5 +1,5 @@
 # ==============================================================================
-#  Copyright (c) 2024 Federico Busetti                                         =
+#  Copyright (c) 2025 Federico Busetti                                         =
 #  <729029+febus982@users.noreply.github.com>                                  =
 #                                                                              =
 #  Permission is hereby granted, free of charge, to any person obtaining a     =
@@ -20,72 +20,13 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
-from typing import Literal, Union
-
 import pytest
 from pydantic import BaseModel, ValidationError
-from typing_extensions import TypedDict
 
-from cloudevents_pydantic.events import CloudEvent
-from cloudevents_pydantic.events.fields.types import (
-    URI,
-    Binary,
-    Integer,
-    String,
-    URIReference,
-)
+from cloudevents_pydantic.events.fields.types import String
 
 
-def test_integer_validation_behaves_as_signed_32bit():
-    class IntModel(BaseModel):
-        value: Integer
-
-    with pytest.raises(ValidationError):
-        IntModel(value=2147483649)
-    with pytest.raises(ValidationError):
-        IntModel(value=-2147483649)
-
-    assert IntModel(value=2312534).value == 2312534
-
-
-@pytest.mark.parametrize(
-    ["data", "validated_data"],
-    [
-        pytest.param("dGVzdA==", b"test", id="bytes_base64"),
-        pytest.param(b"test", b"test", id="bytes"),
-        pytest.param("AgMFBw==", b"\x02\x03\x05\x07", id="bytearray_base64"),
-        pytest.param(b"\x02\x03\x05\x07", b"\x02\x03\x05\x07", id="bytearray"),
-    ],
-)
-def test_binary_validation_accepts_strings_and_bytes(
-    data: Union[bytes, str],
-    validated_data: bytes,
-):
-    class BinaryModel(BaseModel):
-        value: Binary
-
-    model = BinaryModel(value=data)
-
-    assert model.value == validated_data
-    assert isinstance(model.value, bytes)
-
-
-@pytest.mark.parametrize(
-    ["data"],
-    [
-        pytest.param(99.99, id="float"),
-        pytest.param("non?-/*base64-string", id="non_base_64_string"),
-    ],
-)
-def test_binary_validation_fails_on_non_strings_and_bytes(data):
-    class BinaryModel(BaseModel):
-        value: Binary
-
-    with pytest.raises(ValidationError):
-        BinaryModel(value=data)
-
-
-def test_strings_allows_valid_unicode_chars():
+def test_string_validation_allows_valid_unicode_chars():
     class StrModel(BaseModel):
         value: String
 
@@ -105,7 +46,7 @@ def test_strings_allows_valid_unicode_chars():
     list(map(chr, range(ord("\u0000"), ord("\u001f") + 1)))
     + list(map(chr, range(ord("\u007f"), ord("\u009f") + 1))),
 )
-def test_string_fails_if_control_chars(control_char):
+def test_string_validation_fails_if_control_chars(control_char):
     class StrModel(BaseModel):
         value: String
 
@@ -125,7 +66,7 @@ def test_string_fails_if_control_chars(control_char):
         *list(map(chr, range(ord("\udc00"), ord("\udfff") + 1))),
     ],
 )
-def test_string_fails_if_malformed_surrogates(malformed_surrogate):
+def test_string_validation_fails_if_malformed_surrogates(malformed_surrogate):
     class StrModel(BaseModel):
         value: String
 
@@ -180,92 +121,9 @@ def test_string_fails_if_malformed_surrogates(malformed_surrogate):
         # "\U0010ffff",
     ],
 )
-def test_string_fails_on_unicode_noncharacters(unicode_noncharacter):
+def test_string_validation_fails_on_unicode_noncharacters(unicode_noncharacter):
     class StrModel(BaseModel):
         value: String
 
     with pytest.raises(ValidationError):
         StrModel(value="test_" + unicode_noncharacter + "_string")
-
-
-@pytest.mark.parametrize(
-    ["invalid_uri"],
-    (
-        ("non-uri",),
-        ("/relative/uri",),
-    ),
-)
-def test_fails_with_invalid_uri(invalid_uri):
-    class UriModel(BaseModel):
-        value: URI
-
-    with pytest.raises(ValidationError):
-        UriModel(value=invalid_uri)
-
-
-@pytest.mark.parametrize(
-    ["valid_uri"],
-    (
-        ("https://github.com/cloudevents",),
-        ("mailto:cncf-wg-serverless@lists.cncf.io",),
-        ("urn:uuid:6e8bc430-9c3a-11d9-9669-0800200c9a66",),
-    ),
-)
-def test_success_with_valid_uri(valid_uri):
-    class UriModel(BaseModel):
-        value: URI
-
-    UriModel(value=valid_uri)
-
-
-@pytest.mark.parametrize(
-    ["valid_uri"],
-    (
-        ("https://github.com/cloudevents",),
-        ("mailto:cncf-wg-serverless@lists.cncf.io",),
-        ("urn:uuid:6e8bc430-9c3a-11d9-9669-0800200c9a66",),
-        ("/cloudevents/spec/pull/123",),
-        ("/sensors/tn-1234567/alerts",),
-        ("1-555-123-4567",),
-        ("some-microservice",),
-    ),
-)
-def test_success_with_valid_uri_reference(valid_uri):
-    class UriModel(BaseModel):
-        value: URIReference
-
-    UriModel(value=valid_uri)
-
-
-def test_can_use_typed_dict_data_with_canonical_types():
-    class CustomData(TypedDict):
-        a_str: String
-        an_int: Integer
-
-    class AnotherEvent(CloudEvent):
-        data: CustomData
-        type: Literal["order_created"] = "order_created"
-        source: String = "some_service"
-
-    event = AnotherEvent.event_factory(
-        data={"a_str": "a nice string", "an_int": 1},
-    )
-
-    assert event.type == "order_created"
-    assert event.data == {"a_str": "a nice string", "an_int": 1}
-
-
-def test_validation_works_in_typed_dict_data_with_canonical_types():
-    class CustomData(TypedDict):
-        a_str: String
-        an_int: Integer
-
-    class AnotherEvent(CloudEvent):
-        data: CustomData
-        type: Literal["order_created"] = "order_created"
-        source: String = "some_service"
-
-    with pytest.raises(ValidationError):
-        AnotherEvent.event_factory(
-            data={"a_str": "a nice string", "an_int": 2147483649},
-        )

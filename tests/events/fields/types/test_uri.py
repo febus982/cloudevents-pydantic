@@ -1,5 +1,5 @@
 # ==============================================================================
-#  Copyright (c) 2024 Federico Busetti                                         =
+#  Copyright (c) 2025 Federico Busetti                                         =
 #  <729029+febus982@users.noreply.github.com>                                  =
 #                                                                              =
 #  Permission is hereby granted, free of charge, to any person obtaining a     =
@@ -20,74 +20,73 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
-from typing import Union
+from urllib.parse import ParseResult
 
 import pytest
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
-from cloudevents_pydantic.events.fields.types import (
-    Binary,
-    Boolean,
-    URIReference,
-)
+from cloudevents_pydantic.events.fields.types import URI
 
 
 @pytest.mark.parametrize(
-    ["input", "serialized_output"],
+    ["invalid_uri"],
     (
-        (True, "true"),
-        (False, "false"),
+        ("non-uri",),
+        ("/relative/uri",),
     ),
 )
-def test_bool_serialization(input, serialized_output):
-    class BoolModel(BaseModel):
-        value: Boolean
+def test_validation_fails_with_invalid_uri(invalid_uri):
+    class UriModel(BaseModel):
+        value: URI
 
-    assert BoolModel(value=input).model_dump()["value"] == serialized_output
-
-
-@pytest.mark.parametrize(
-    ["data", "serialized_output"],
-    [
-        pytest.param(b"test", "dGVzdA==", id="bytes"),
-        pytest.param(b"\x02\x03\x05\x07", "AgMFBw==", id="bytearray"),
-    ],
-)
-def test_binary_serialization(
-    data: Union[bytes, str],
-    serialized_output: str,
-):
-    class BinaryModel(BaseModel):
-        value: Binary
-
-    model = BinaryModel(value=data)
-
-    serialized_value = model.model_dump()["value"]
-
-    assert serialized_value == serialized_output
-    assert isinstance(serialized_value, str)
+    with pytest.raises(ValidationError):
+        UriModel(value=invalid_uri)
 
 
 @pytest.mark.parametrize(
-    ["data", "serialized_output"],
-    [
-        pytest.param(b"test", "dGVzdA==", id="bytes"),
-        pytest.param(b"\x02\x03\x05\x07", "AgMFBw==", id="bytearray"),
-    ],
+    ["valid_uri", "parsed_uri"],
+    (
+        (
+            "https://github.com/cloudevents",
+            ParseResult(
+                scheme="https",
+                netloc="github.com",
+                path="/cloudevents",
+                params="",
+                query="",
+                fragment="",
+            ),
+        ),
+        (
+            "mailto:cncf-wg-serverless@lists.cncf.io",
+            ParseResult(
+                scheme="mailto",
+                netloc="",
+                path="cncf-wg-serverless@lists.cncf.io",
+                params="",
+                query="",
+                fragment="",
+            ),
+        ),
+        (
+            "urn:uuid:6e8bc430-9c3a-11d9-9669-0800200c9a66",
+            ParseResult(
+                scheme="urn",
+                netloc="",
+                path="uuid:6e8bc430-9c3a-11d9-9669-0800200c9a66",
+                params="",
+                query="",
+                fragment="",
+            ),
+        ),
+    ),
 )
-def test_nested_binary_serialization(
-    data: Union[bytes, str],
-    serialized_output: str,
-):
-    class BinaryModel(BaseModel):
-        value: Binary
+def test_validation_success_with_valid_uri(valid_uri, parsed_uri):
+    class UriModel(BaseModel):
+        value: URI
 
-    model = BinaryModel(value=data)
-
-    serialized_value = model.model_dump()["value"]
-
-    assert serialized_value == serialized_output
-    assert isinstance(serialized_value, str)
+    m = UriModel(value=valid_uri)
+    assert m.value == parsed_uri
 
 
 @pytest.mark.parametrize(
@@ -96,14 +95,13 @@ def test_nested_binary_serialization(
         ("https://github.com/cloudevents",),
         ("mailto:cncf-wg-serverless@lists.cncf.io",),
         ("urn:uuid:6e8bc430-9c3a-11d9-9669-0800200c9a66",),
-        ("/cloudevents/spec/pull/123",),
-        ("/sensors/tn-1234567/alerts",),
-        ("1-555-123-4567",),
-        ("some-microservice",),
     ),
 )
-def test__uri_reference_serializer(valid_uri):
+def test_serialization(valid_uri):
     class UriModel(BaseModel):
-        value: URIReference
+        value: URI
 
-    assert UriModel(value=valid_uri).model_dump()["value"] == valid_uri
+    m = UriModel(value=valid_uri)
+    assert m.model_dump() == {"value": valid_uri}
+    assert m.model_dump_json() == '{"value":"' + valid_uri + '"}'
+    assert isinstance(m.model_dump()["value"], str)
