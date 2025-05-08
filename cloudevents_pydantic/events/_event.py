@@ -62,7 +62,7 @@ DEFAULT_SPECVERSION = SpecVersion.v1_0
 _binary_field_metadata = FieldInfo.from_annotation(Binary).metadata
 
 
-class CloudEvent(BaseModel):  # type: ignore
+class CloudEvent(BaseModel):
     """
     A Python-friendly CloudEvent representation backed by Pydantic-modeled fields.
     """
