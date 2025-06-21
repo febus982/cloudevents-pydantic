@@ -32,3 +32,15 @@ from ._canonic_types import (
     Timestamp,
     URIReference,
 )
+
+__all__ = [
+    "URI",
+    "Binary",
+    "Boolean",
+    "Integer",
+    "MimeType",
+    "SpecVersion",
+    "String",
+    "Timestamp",
+    "URIReference",
+]
