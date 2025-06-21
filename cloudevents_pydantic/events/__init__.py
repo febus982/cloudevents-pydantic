@@ -23,3 +23,5 @@
 
 
 from ._event import CloudEvent
+
+__all__ = ["CloudEvent"]
