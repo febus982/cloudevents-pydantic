@@ -146,7 +146,7 @@ class CloudEvent(BaseModel):
         :return: Event serialized as a standard CloudEvent dict with binary
                  data handled.
         """
-        model_dict = self.model_dump()  # type: ignore
+        model_dict = self.model_dump()
         if _binary_field_metadata == self.model_fields["data"].metadata:
             model_dict["data_base64"] = model_dict["data"]
             del model_dict["data"]
