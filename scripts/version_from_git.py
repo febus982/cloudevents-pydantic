@@ -1,5 +1,5 @@
 # ==============================================================================
-#  Copyright (c) 2024 Federico Busetti                                         =
+#  Copyright (c) 2025 Federico Busetti                                         =
 #  <729029+febus982@users.noreply.github.com>                                  =
 #                                                                              =
 #  Permission is hereby granted, free of charge, to any person obtaining a     =
@@ -20,3 +20,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         =
 #  DEALINGS IN THE SOFTWARE.                                                   =
 # ==============================================================================
+from dunamai import Version
+
+version = Version.from_git().serialize()
+print(version)
