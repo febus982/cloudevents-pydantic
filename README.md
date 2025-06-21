@@ -5,8 +5,8 @@
 [![stability-beta](https://img.shields.io/badge/stability-beta-33bbff.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#beta)
 
 [![Python tests](https://github.com/febus982/cloudevents-pydantic/actions/workflows/python-tests.yml/badge.svg?branch=main)](https://github.com/febus982/cloudevents-pydantic/actions/workflows/python-tests.yml)
-[![Maintainability](https://api.codeclimate.com/v1/badges/c7fe3ebcadd850d7ed3f/maintainability)](https://codeclimate.com/github/febus982/cloudevents-pydantic/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/c7fe3ebcadd850d7ed3f/test_coverage)](https://codeclimate.com/github/febus982/cloudevents-pydantic/test_coverage)
+[![Maintainability](https://qlty.sh/badges/9abc9122-bfd4-4ad1-bdbd-cb2e8324180b/maintainability.svg)](https://qlty.sh/gh/febus982/projects/cloudevents-pydantic)
+[![Code Coverage](https://qlty.sh/badges/9abc9122-bfd4-4ad1-bdbd-cb2e8324180b/test_coverage.svg)](https://qlty.sh/gh/febus982/projects/cloudevents-pydantic)
 
 [![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json)](https://github.com/charliermarsh/ruff)
