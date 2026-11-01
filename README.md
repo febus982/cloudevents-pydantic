@@ -37,7 +37,7 @@ minimal_attributes = {
 }
 
 # `CloudEvent` is a Pydantic model to handle validation and serialization
-# `event_factory` is a helper method to autogenerate some of the mandatory 
+# `event_factory` is a helper method to autogenerate some of the mandatory
 # such as id, time, specversion
 event = CloudEvent.event_factory(**minimal_attributes)
 
