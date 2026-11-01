@@ -44,7 +44,8 @@ def serialize(event: CloudEvent) -> str:
 
 
 def deserialize(
-    data: str, event_adapter: TypeAdapter[_T] = TypeAdapter(CloudEvent)
+    data: str,
+    event_adapter: TypeAdapter[_T] = TypeAdapter(CloudEvent),  # type: ignore[arg-type]
 ) -> _T:
     """
     Deserializes an event from JSON format.
@@ -61,7 +62,7 @@ def deserialize(
 
 def serialize_batch(
     events: List[_T],
-    batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),
+    batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),  # type: ignore[arg-type]
 ) -> str:
     """
     Serializes a list of events in JSON batch format.
@@ -78,7 +79,7 @@ def serialize_batch(
 
 def deserialize_batch(
     data: str,
-    batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),
+    batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),  # type: ignore[arg-type]
 ) -> List[_T]:
     """
     Deserializes a list of events from JSON batch format.
