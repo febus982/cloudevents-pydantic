@@ -1,6 +1,6 @@
 # cloudevents-pydantic
 
-![Static Badge](https://img.shields.io/badge/Python-3.9_%7C_3.10_%7C_3.11_%7C_3.12_%7C_3.13-blue?logo=python&logoColor=white)
+![Static Badge](https://img.shields.io/badge/Python-3.9_%7C_3.10_%7C_3.11_%7C_3.12_%7C_3.13_%7C_3.14_%7C_3.15-blue?logo=python&logoColor=white)
 [![Stable Version](https://img.shields.io/pypi/v/cloudevents-pydantic?color=blue)](https://pypi.org/project/cloudevents-pydantic/)
 [![stability-beta](https://img.shields.io/badge/stability-beta-33bbff.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#beta)
 
