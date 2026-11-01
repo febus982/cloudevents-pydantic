@@ -66,7 +66,7 @@ def time_serializer(value: datetime) -> str:
 
 def binary_validator(value: Union[str, bytes, bytearray, memoryview]) -> bytes:
     if isinstance(value, (bytes, bytearray, memoryview)):
-        return value
+        return bytes(value)
 
     if isinstance(value, str):
         return base64.b64decode(value, validate=True)

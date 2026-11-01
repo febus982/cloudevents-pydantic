@@ -42,7 +42,8 @@ def serialize(event: CloudEvent) -> Dict[str, str]:
 
 
 def deserialize(
-    data: Dict[str, str], event_adapter: TypeAdapter[_T] = TypeAdapter(CloudEvent)
+    data: Dict[str, str],
+    event_adapter: TypeAdapter[_T] = TypeAdapter(CloudEvent),  # type: ignore[arg-type]
 ) -> _T:
     """
     Deserializes an event from a dictionary with canonical values representations.
@@ -59,7 +60,7 @@ def deserialize(
 
 def serialize_batch(
     events: List[_T],
-    batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),
+    batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),  # type: ignore[arg-type]
 ) -> List[Dict[str, str]]:
     """
     Serializes a list of events to dictionaries with canonical values representations.
@@ -76,7 +77,7 @@ def serialize_batch(
 
 def deserialize_batch(
     data: List[Dict[str, str]],
-    batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),
+    batch_adapter: TypeAdapter[List[_T]] = TypeAdapter(List[CloudEvent]),  # type: ignore[arg-type]
 ) -> List[_T]:
     """
     Deserializes a list of events from a list of dictionaries with
